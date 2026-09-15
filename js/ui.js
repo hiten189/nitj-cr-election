@@ -1,26 +1,259 @@
-function showToast(message, type = "info") {
-    let toast = document.getElementById("toast");
-    if (!toast) { toast = document.createElement("div"); toast.id = "toast"; document.body.appendChild(toast); }
-    toast.className = `toast ${type} show`;
-    toast.textContent = message;
-    clearTimeout(toast.timer);
-    toast.timer = setTimeout(() => toast.classList.remove("show"), 4000);
+/* ==========================================================
+   IPE Voting System
+   ui.js - Reusable UI Components
+========================================================== */
+
+const UI = {
+    // -------------------------
+    // Toast Notification
+    // -------------------------
+    showToast(message, type = "info") {
+        let toast = document.getElementById("toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "toast";
+            document.body.appendChild(toast);
+        }
+        toast.className = `${type} show`;
+        if (typeof triggerHaptic === "function") {
+            triggerHaptic(type === "error" ? "heavy" : type === "success" ? "success" : "light");
+        }
+        
+        let icon = "ℹ️";
+        if (type === "success") icon = "✅";
+        if (type === "error") icon = "❌";
+        if (type === "warning") icon = "⚠️";
+
+        toast.innerHTML = `<span>${icon}</span> <span>${escapeHTML(message)}</span>`;
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => toast.classList.remove("show"), 4000);
+    },
+
+    // -------------------------
+    // Full Screen Loaders
+    // -------------------------
+    startLoading() {
+        const loader = document.getElementById("loader");
+        if (loader) loader.style.display = "flex";
+    },
+    stopLoading() {
+        const loader = document.getElementById("loader");
+        if (loader) loader.style.display = "none";
+    },
+
+    setButtonLoading(button, loading) {
+        if (!button) return;
+        if (loading) {
+            button.dataset.label = button.textContent;
+            button.disabled = true;
+            button.innerHTML = '<span class="loader-spinner-small"></span> <span>Wait...</span>';
+        } else {
+            button.disabled = false;
+            button.textContent = button.dataset.label || "Submit";
+        }
+    },
+
+    // -------------------------
+    // Action Sheets (Mobile Modals)
+    // -------------------------
+    showModal(title, contentHTML, footerHTML = "") {
+        const dialog = document.createElement("dialog");
+        dialog.className = "ui-modal";
+        dialog.innerHTML = `
+            <div class="ui-modal-card">
+                <header class="ui-modal-header">
+                    <h2>${escapeHTML(title)}</h2>
+                    <button class="ui-modal-close" aria-label="Close">&times;</button>
+                </header>
+                <div class="ui-modal-body">${contentHTML}</div>
+                ${footerHTML ? `<footer class="ui-modal-footer">${footerHTML}</footer>` : ""}
+            </div>
+        `;
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+        // Close when clicking the backdrop
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) {
+                dialog.close();
+            }
+        });
+
+        const closeBtn = dialog.querySelector(".ui-modal-close");
+        if (closeBtn) closeBtn.onclick = () => dialog.close();
+
+        dialog.addEventListener("close", () => dialog.remove());
+        return dialog;
+    },
+
+    confirmDialog(title, message, confirmText = "Confirm", cancelText = "Cancel", isDanger = false) {
+        return new Promise((resolve) => {
+            const footerHTML = `
+                <button class="btn btn-ghost" id="confirm-cancel">${escapeHTML(cancelText)}</button>
+                <button class="btn ${isDanger ? 'btn-danger' : 'btn-primary'} haptic-press" id="confirm-proceed">${escapeHTML(confirmText)}</button>
+            `;
+            // Simple haptic trigger attempt (works on some Androids)
+            if (navigator.vibrate && isDanger) navigator.vibrate([50, 100, 50]);
+
+            const dialog = UI.showModal(title, `<p>${escapeHTML(message)}</p>`, footerHTML);
+            
+            dialog.querySelector("#confirm-cancel").onclick = () => {
+                dialog.close();
+                resolve(false);
+            };
+            dialog.querySelector("#confirm-proceed").onclick = () => {
+                dialog.close();
+                resolve(true);
+            };
+        });
+    },
+
+    // -------------------------
+    // Basic Components
+    // -------------------------
+    Badge(text, type = "default") {
+        return `<span class="ui-badge ui-badge-${type}">${escapeHTML(text)}</span>`;
+    },
+
+    Card(title, bodyHTML, extraClass = "") {
+        return `
+            <div class="ui-card ${extraClass}">
+                ${title ? `<h3 class="ui-card-title">${escapeHTML(title)}</h3>` : ""}
+                <div class="ui-card-body">${bodyHTML}</div>
+            </div>
+        `;
+    },
+
+    StatCard(label, value, subtext = "", icon = "") {
+        return `
+            <div class="ui-stat-card">
+                ${icon ? `<div class="ui-stat-icon">${icon}</div>` : ""}
+                <div class="ui-stat-content">
+                    <span class="ui-stat-label">${escapeHTML(label)}</span>
+                    <strong class="ui-stat-value">${escapeHTML(String(value))}</strong>
+                    ${subtext ? `<small class="ui-stat-subtext">${escapeHTML(subtext)}</small>` : ""}
+                </div>
+            </div>
+        `;
+    },
+
+    EmptyState(message, icon = "📁") {
+        return `
+            <div class="ui-empty-state">
+                <div class="ui-empty-icon">${icon}</div>
+                <p class="ui-empty-text">${escapeHTML(message)}</p>
+            </div>
+        `;
+    },
+
+    Skeleton() {
+        return `<div class="ui-skeleton"></div>`;
+    },
+
+    ProgressBar(percentage) {
+        const pct = Math.max(0, Math.min(100, percentage));
+        return `
+            <div class="ui-progress-container">
+                <div class="ui-progress-bar" style="width: ${pct}%"></div>
+            </div>
+        `;
+    },
+
+    // -------------------------
+    // Forms
+    // -------------------------
+    InputGroup(id, label, type, value, placeholder = "") {
+        return `
+            <div class="ui-input-group">
+                <label for="${id}">${escapeHTML(label)}</label>
+                <input type="${type}" id="${id}" value="${escapeHTML(String(value || ''))}" placeholder="${escapeHTML(placeholder)}">
+            </div>
+        `;
+    },
+
+    ToggleSwitch(id, label, checked) {
+        return `
+            <div style="display:flex; align-items:center; justify-content:space-between; padding: 12px 16px; background: rgba(0,0,0,0.2); border-radius: var(--r-md); border: 1px solid var(--border); margin-bottom: 12px; transition: all var(--t-fast);" onactive="this.style.transform='scale(0.98)'">
+                <label for="${id}" style="font-weight:600; font-size:0.9rem; color:var(--text); cursor:pointer; flex: 1;">${escapeHTML(label)}</label>
+                <label class="ui-switch haptic-press">
+                    <input type="checkbox" id="${id}" ${checked ? 'checked' : ''}>
+                    <span class="ui-switch-slider"></span>
+                </label>
+            </div>
+        `;
+    },
+
+    // -------------------------
+    // Table (Converting to Grid where appropriate later, but keep as fallback)
+    // -------------------------
+    Table(headers, rowsData, renderRowFn) {
+        if (!rowsData || rowsData.length === 0) return UI.EmptyState("No data available.");
+        
+        const thead = headers.map(h => `<th>${escapeHTML(h)}</th>`).join("");
+        const tbody = rowsData.map((row, index) => `<tr>${renderRowFn(row, index)}</tr>`).join("");
+        
+        return `
+            <div class="ui-table-container">
+                <table class="ui-table">
+                    <thead><tr>${thead}</tr></thead>
+                    <tbody>${tbody}</tbody>
+                </table>
+            </div>
+        `;
+    },
+
+    // -------------------------
+    // Layout Interactions
+    // -------------------------
+    setupDynamicBottomNav(navSelector = ".admin-sidebar") {
+        const nav = document.querySelector(navSelector);
+        if (!nav) return;
+
+        let lastScrollY = window.scrollY;
+        
+        // Hide on scroll down, show on scroll up (Safari style) - MOBILE ONLY
+        window.addEventListener("scroll", () => {
+            if (window.innerWidth > 768) {
+                nav.classList.remove("nav-hidden");
+                return;
+            }
+            if (window.scrollY > lastScrollY && window.scrollY > 50) {
+                nav.classList.add("nav-hidden");
+            } else {
+                nav.classList.remove("nav-hidden");
+            }
+            lastScrollY = window.scrollY;
+        }, { passive: true });
+
+        // iOS Keyboard Handling: hide nav when any input/textarea is focused - MOBILE ONLY
+        document.body.addEventListener("focusin", (e) => {
+            if (window.innerWidth > 768) return;
+            if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") {
+                nav.classList.add("nav-hidden");
+            }
+        });
+
+        document.body.addEventListener("focusout", (e) => {
+            if (window.innerWidth > 768) return;
+            nav.classList.remove("nav-hidden");
+        });
+    }
+};
+
+window.UI = UI;
+
+// Maintain backwards compatibility
+window.showToast = UI.showToast;
+window.startLoading = UI.startLoading;
+window.stopLoading = UI.stopLoading;
+window.setButtonLoading = UI.setButtonLoading;
+
+function renderError(title, message) { 
+    document.getElementById("app").innerHTML = `<main class="center-screen"><h1>${escapeHTML(title)}</h1><p>${escapeHTML(message)}</p></main>`; 
 }
-function render(html) { document.getElementById("app").innerHTML = html; }
-function startLoading() { showLoader(); }
-function stopLoading() { hideLoader(); }
-function setButtonLoading(button, loading) {
-    if (!button) return;
-    if (loading) { button.dataset.label = button.textContent; button.disabled = true; button.textContent = "Please wait..."; }
-    else { button.disabled = false; button.textContent = button.dataset.label || "Send Magic Link"; }
-}
-function renderError(title, message) { render(`<main class="center-screen"><h1>${escapeHTML(title)}</h1><p>${escapeHTML(message)}</p></main>`); }
+
 function renderSuccess(title, message, includeLogout = false) {
-    render(`<main class="center-screen"><h1>${escapeHTML(title)}</h1><p>${escapeHTML(message)}</p>${includeLogout ? '<button id="logout-btn" type="button">Log out</button>' : ""}</main>`);
+    document.getElementById("app").innerHTML = `<main class="center-screen"><h1>${escapeHTML(title)}</h1><p>${escapeHTML(message)}</p>${includeLogout ? '<button class="btn btn-ghost haptic-press" id="logout-btn" type="button" style="margin-top: 16px; width: 100%;">Log out</button>' : ""}</main>`;
     const logoutButton = document.getElementById("logout-btn");
-    if (logoutButton) logoutButton.addEventListener("click", logout);
-}
-function renderLogin() {
-    render(`<main class="login-page"><section class="login-card"><h1 class="login-title">IPE Voting System</h1><p class="login-subtitle">Choose your portal, then sign in with your approved email address.</p><form id="loginForm"><div class="login-selector" role="group" aria-label="Choose login portal"><button class="login-role is-selected" type="button" data-login-role="student" aria-pressed="true">Student Login</button><button class="login-role" type="button" data-login-role="admin" aria-pressed="false">Admin Login</button></div><p id="login-role-description" class="login-role-description">Use your approved student email to access the voting portal.</p><div class="form-group"><label for="email">Email address</label><input id="email" type="email" placeholder="example.ip.25@nitj.ac.in" autocomplete="email" required></div><button type="submit">Send Magic Link</button></form></section></main>`);
-    initializeLogin();
+    if (logoutButton) logoutButton.addEventListener("click", AuthAPI.signOut);
 }

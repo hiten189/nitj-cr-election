@@ -1,9 +1,10 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log("App starting...");
     try {
         await routeAuthenticatedUser();
     } catch (error) {
-        console.error("Application startup error:", error);
-        renderError("Unable to load", error.message || MESSAGE.UNKNOWN_ERROR);
+        console.error("Application startup failed:", error);
+        renderError("Unable to load", "The election configuration could not be loaded. Please contact the election administrator.");
     } finally {
         stopLoading();
         showApp();

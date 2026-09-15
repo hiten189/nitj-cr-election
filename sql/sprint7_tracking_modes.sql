@@ -127,3 +127,108 @@ BEGIN
     );
 END;
 $$;
+
+-- 5. Helper RPCs for public results calculation & RLS Policy for published results
+CREATE OR REPLACE FUNCTION public.get_election_results()
+RETURNS TABLE (
+    position_name text,
+    candidate_id uuid,
+    candidate_name text,
+    vote_count bigint
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    SELECT 'Male CR'::text, v.male_candidate_id, c.name, COUNT(v.male_candidate_id)
+    FROM public.votes AS v
+    JOIN public.candidates AS c ON c.id = v.male_candidate_id
+    WHERE v.male_candidate_id IS NOT NULL
+    GROUP BY v.male_candidate_id, c.name
+    UNION ALL
+    SELECT 'Female CR'::text, v.female_candidate_id, c.name, COUNT(v.female_candidate_id)
+    FROM public.votes AS v
+    JOIN public.candidates AS c ON c.id = v.female_candidate_id
+    WHERE v.female_candidate_id IS NOT NULL
+    GROUP BY v.female_candidate_id, c.name;
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_write_in_results()
+RETURNS TABLE (position_name text, roll_number text, vote_count bigint)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+    SELECT 'Male CR'::text, v.male_write_in_roll, COUNT(v.male_write_in_roll)
+    FROM public.votes AS v
+    WHERE v.male_write_in_roll IS NOT NULL
+    GROUP BY v.male_write_in_roll
+    UNION ALL
+    SELECT 'Female CR'::text, v.female_write_in_roll, COUNT(v.female_write_in_roll)
+    FROM public.votes AS v
+    WHERE v.female_write_in_roll IS NOT NULL
+    GROUP BY v.female_write_in_roll;
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_election_ballot_count()
+RETURNS bigint
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$ SELECT COUNT(*) FROM public.votes; $$;
+
+GRANT EXECUTE ON FUNCTION public.get_election_results() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_write_in_results() TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_election_ballot_count() TO anon, authenticated;
+
+-- Allow public and students to read anonymous votes when results are published
+DROP POLICY IF EXISTS "Public read votes when results published" ON public.votes;
+CREATE POLICY "Public read votes when results published" ON public.votes
+FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.settings WHERE results_published = true)
+);
+
+-- Allow admins to delete votes regardless of election status when resetting
+DROP POLICY IF EXISTS "Admin delete votes in draft" ON public.votes;
+DROP POLICY IF EXISTS "Admins can delete votes" ON public.votes;
+CREATE POLICY "Admins can delete votes" ON public.votes
+FOR DELETE USING (public.is_admin(auth.jwt() ->> 'email'));
+
+-- Allow admins to delete voter_tracking when resetting election
+DROP POLICY IF EXISTS "Admins can delete voter tracking" ON public.voter_tracking;
+CREATE POLICY "Admins can delete voter tracking" ON public.voter_tracking
+FOR DELETE USING (public.is_admin(auth.jwt() ->> 'email'));
+
+-- 6. Reset Election Data RPC
+CREATE OR REPLACE FUNCTION public.reset_election_data()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    IF NOT public.is_admin(auth.jwt() ->> 'email') THEN
+        RAISE EXCEPTION 'UNAUTHORIZED';
+    END IF;
+
+    -- Clear all ballot votes & participation tracking
+    DELETE FROM public.votes;
+    DELETE FROM public.voter_tracking;
+
+    -- Reset eligible student statuses
+    UPDATE public.eligible_students
+    SET status = 'pending', voted_at = NULL;
+
+    -- Reset election state to draft & unpublished
+    UPDATE public.settings
+    SET election_status = 'draft',
+        results_published = false,
+        election_locked = false;
+
+    -- Log activity
+    INSERT INTO public.vote_activity_log (actor, event_type)
+    VALUES (auth.jwt() ->> 'email', 'RESET_ELECTION');
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.reset_election_data() TO authenticated;

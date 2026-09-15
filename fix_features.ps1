@@ -1,0 +1,3 @@
+$content = Get-Content 'c:\Users\HITEN\OneDrive\Hiten\ipe-voting sytem\js\features.js' -Raw
+$content = $content -replace 'localStorage.removeItem\("admin_active_section"\);\s*sessionStorage.clear\(\);', 'localStorage.removeItem("admin_active_section");\n    localStorage.removeItem("ipe-admin-config");  // Legacy key\n    sessionStorage.clear();'
+Set-Content 'c:\Users\HITEN\OneDrive\Hiten\ipe-voting sytem\js\features.js' -Value $content -NoNewline

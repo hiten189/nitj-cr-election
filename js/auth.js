@@ -12,19 +12,28 @@ function emailMatchesRule(email, rule) {
     return new RegExp("^" + wildcard + "$", "i").test(email);
 }
 
+function isValidSignInEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || "").trim());
+}
+
 async function isDatabaseAdmin(email) {
-    if (isAdmin(email)) return true;
     try {
-        const { data } = await supabaseClient
-            .from("admins")
-            .select("id")
-            .eq("email", email)
-            .eq("active", true)
-            .maybeSingle();
-        return Boolean(data);
-    } catch {
-        return false;
+        // This runs before a magic-link session exists. Reading `admins`
+        // directly is normally blocked by RLS at that point, so use the
+        // narrowly scoped RPC instead of accidentally treating an admin as a
+        // student.
+        const { data, error } = await supabaseClient.rpc("is_admin_email", {
+            user_email: normalizeEmail(email)
+        });
+        if (!error) return data === true;
+        console.warn("Pre-login admin check RPC unavailable:", error.message);
+    } catch (error) {
+        console.warn("Pre-login admin check failed:", error.message);
     }
+
+    // Local development fallback. Production authorization remains governed
+    // by the `admins` table through the RPC above.
+    return isAdmin(email);
 }
 
 async function isAllowedEmail(email) {
@@ -45,27 +54,34 @@ async function isAllowedEmail(email) {
     return data === true;
 }
 
-async function sendMagicLink(email, button, loginRole = "student") {
+async function sendMagicLink(email, button) {
     email = normalizeEmail(email);
-    if (!isAdmin(email) && !isValidEmail(email)) {
-        showToast(MESSAGE.INVALID_EMAIL, "error");
+    if (!isValidSignInEmail(email)) {
+        showToast("Enter a valid email address.", "error");
         return;
     }
 
     setButtonLoading(button, true);
     try {
-        const databaseAdmin = await isDatabaseAdmin(email);
-        if (loginRole === "admin" && !databaseAdmin) {
-            showToast("This email is not authorised for the admin portal.", "error");
-            return;
-        }
-        if (loginRole === "student" && databaseAdmin) {
-            showToast("Please use Admin Login for an administrator account.", "error");
-            return;
-        }
-        if (loginRole === "student" && !await isAllowedEmail(email)) {
-            showToast(MESSAGE.NOT_ALLOWED, "error");
-            return;
+        const administrator = await isDatabaseAdmin(email);
+        if (!administrator) {
+            const availability = await PublicElectionAPI.getAvailability();
+            if (!availability.settingsConfigured) {
+                showToast("Election not set up yet. Please try again later.", "warning");
+                return;
+            }
+            if (!availability.authorizationConfigured) {
+                showToast("Student access isn't enabled yet. Contact the admin.", "warning");
+                return;
+            }
+            if (!availability.studentLoginsOpen) {
+                showToast("Sign-in isn't open yet. Check back when voting starts.", "warning");
+                return;
+            }
+            if (!await isAllowedEmail(email)) {
+                showToast(MESSAGE.NOT_ALLOWED, "error");
+                return;
+            }
         }
         const redirectUrl = MAGIC_LINK_REDIRECT || (window.location.origin + window.location.pathname);
         const { error } = await supabaseClient.auth.signInWithOtp({
@@ -73,10 +89,11 @@ async function sendMagicLink(email, button, loginRole = "student") {
             options: { emailRedirectTo: redirectUrl }
         });
         if (error) throw error;
-        showToast(MESSAGE.MAGIC_LINK_SENT, "success");
+        // Navigate to link-sent confirmation screen
+        renderLinkSent(email);
     } catch (error) {
         console.error("Magic link error:", error);
-        showToast(error.message || MESSAGE.UNKNOWN_ERROR, "error");
+        showToast("Couldn't send the link. Please try again.", "error");
     } finally {
         setButtonLoading(button, false);
     }
@@ -84,42 +101,91 @@ async function sendMagicLink(email, button, loginRole = "student") {
 
 async function logout() {
     await signOut();
-    window.location.replace("/");
+    render(`
+        <main class="auth-page" style="animation: fadeUp 0.4s ease;">
+            <section class="auth-card" style="text-align:center;">
+                <div style="font-size:2.8rem;margin-bottom:16px;">&#128075;</div>
+                <h1 style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;margin-bottom:8px;">Signed out</h1>
+                <p style="color:var(--text-2);font-size:0.9rem;margin-bottom:24px;">Your session was securely cleared.</p>
+                <button class="auth-submit haptic-press" onclick="window.location.replace('/')" style="width:100%;">Back to Sign In</button>
+            </section>
+        </main>
+    `);
+}
+
+function renderLinkSent(email) {
+    render(`
+        <main class="auth-page">
+            <section class="auth-card link-sent-card" aria-labelledby="link-sent-title">
+                <div class="link-sent-icon" aria-hidden="true">&#9993;</div>
+                <h1 id="link-sent-title" class="link-sent-title">Check your inbox</h1>
+                <p class="link-sent-body">We sent a sign-in link to</p>
+                <div class="link-sent-email-pill">${escapeHTML(email)}</div>
+                <p class="link-sent-hint">Tap the link in the email to sign in instantly. Check your spam folder if you don't see it within a minute.</p>
+                <div class="link-sent-actions">
+                    <a id="open-gmail-btn"
+                       class="auth-submit link-sent-gmail haptic-press"
+                       href="https://mail.google.com" target="_blank" rel="noopener">
+                        &#128140; Open Gmail
+                    </a>
+                    <button class="btn btn-ghost haptic-press link-sent-back" type="button" id="try-diff-email-btn">
+                        Try a different email
+                    </button>
+                </div>
+                <p class="link-sent-expire">&#128274; This link expires in 1 hour</p>
+            </section>
+        </main>`);
+    document.getElementById("try-diff-email-btn").addEventListener("click", renderLogin);
 }
 
 async function routeAuthenticatedUser() {
+    console.log("Checking auth session...");
     const session = await getSession();
     if (!session) {
+        console.log("No session found; rendering login.");
         renderLogin();
         return;
     }
     const email = normalizeEmail(session.user.email || "");
+    console.log("Session found for:", email);
     if (await isDatabaseAdmin(email)) {
+        console.log("Active administrator found; redirecting to admin portal.");
         window.location.replace("/admin/");
         return;
     }
+    console.log("Student session found; loading student dashboard settings.");
     await renderStudentDashboard(email);
 }
 
 function initializeLogin() {
     const form = document.getElementById("loginForm");
     if (!form) return;
-    let loginRole = "student";
-    form.querySelectorAll("[data-login-role]").forEach((control) => {
-        control.addEventListener("click", () => {
-            loginRole = control.dataset.loginRole;
-            form.querySelectorAll("[data-login-role]").forEach(button => {
-                const selected = button === control;
-                button.classList.toggle("is-selected", selected);
-                button.setAttribute("aria-pressed", String(selected));
-            });
-            document.getElementById("login-role-description").textContent = loginRole === "admin"
-                ? "Use your authorised administrator email to access the admin portal."
-                : "Use your approved student email to access the voting portal.";
-        });
-    });
     form.addEventListener("submit", (event) => {
         event.preventDefault();
-        sendMagicLink(document.getElementById("email").value, form.querySelector("button[type=submit]"), loginRole);
+        sendMagicLink(document.getElementById("email").value, form.querySelector("button[type=submit]"));
     });
+}
+
+function renderLogin() {
+    render(`
+        <main class="auth-page">
+            <section class="auth-card" aria-labelledby="login-title">
+                <header class="auth-header">
+                    <div class="auth-brand">
+                        <span class="auth-mark-pill">NITJ</span>
+                        CR Election
+                    </div>
+                    <h1 id="login-title">Cast your vote</h1>
+                    <p>Enter your institute email &mdash; we&rsquo;ll send you a secure sign-in link instantly.</p>
+                </header>
+                <form id="loginForm" class="auth-form" novalidate>
+                    <label class="auth-field" for="email">Institute email address
+                        <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@nitj.ac.in" required>
+                    </label>
+                    <button class="auth-submit haptic-press" type="submit"><span>Send Sign-In Link</span><span aria-hidden="true">&rarr;</span></button>
+                </form>
+                <footer class="auth-footer"><span class="auth-security" aria-hidden="true">&#9670;</span><span>Trouble signing in? Contact the election admin.</span></footer>
+            </section>
+        </main>`);
+    initializeLogin();
 }

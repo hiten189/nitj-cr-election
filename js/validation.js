@@ -62,7 +62,7 @@ function hasSelectedCandidate(candidateId, writeInRoll) {
    Vote Validation
 ------------------------------ */
 
-function validateVote(vote) {
+function validateVote(vote, electionPositions = "male_female") {
 
     if (!vote)
         return {
@@ -70,22 +70,21 @@ function validateVote(vote) {
             message: "Vote data not found."
         };
 
-    if (!hasSelectedCandidate(vote.male_candidate_id, vote.male_write_in_roll)) {
+    const requireMale = electionPositions !== "female_only";
+    const requireFemale = electionPositions !== "male_only";
 
+    if (requireMale && !hasSelectedCandidate(vote.male_candidate_id, vote.male_write_in_roll)) {
         return {
             valid: false,
             message: "Please select or enter a Male CR candidate."
         };
-
     }
 
-    if (!hasSelectedCandidate(vote.female_candidate_id, vote.female_write_in_roll)) {
-
+    if (requireFemale && !hasSelectedCandidate(vote.female_candidate_id, vote.female_write_in_roll)) {
         return {
             valid: false,
             message: "Please select or enter a Female CR candidate."
         };
-
     }
 
     return {

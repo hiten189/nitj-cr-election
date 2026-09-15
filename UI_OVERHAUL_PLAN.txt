@@ -1,0 +1,32 @@
+# GenZ UI Overhaul & Dynamic Bottom Navigation Plan
+
+This plan details the changes required to implement a scrollable, highly compact, and highly dynamic UI with a Safari-style bottom navigation bar, optimized specifically for the 6-inch iPhone 15 screen ratio, including iOS keyboard handling and a dedicated logout screen.
+
+## Goal
+To refactor the CSS and JavaScript to remove strict `100vh` non-scrollable constraints, reduce the overall scale of text and UI elements to maximize on-screen information density, move the navigation bars to the bottom of the screen (Safari-style), move the logout button to the top, ensure email templates use the full width of a mobile screen, handle the iOS virtual keyboard gracefully, and provide a polished logout experience.
+
+## Proposed Changes
+
+### CSS Layout & Typography
+- globals.css: Reduce `font-size` on `body` to `13px` or `14px`. Adjust design tokens to ensure high contrast and crisp 4K rendering.
+- admin.css & student.css: Remove `height: 100dvh` and `overflow-y: hidden` constraints from content wrappers to re-enable natural page scrolling.
+- Refactor `.admin-sidebar` and `.student-sidebar` into `.bottom-nav-bar`. Apply `position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000;`.
+- Add a new `.nav-hidden` class with `transform: translateY(120%);` for the hide-on-scroll effect.
+- Enhance `.nav-item.active` to feature a strong futuristic "iOS 26" glassmorphism pill highlight (`backdrop-filter: blur(20px); background: rgba(255,255,255,0.1); border-radius: 20px; box-shadow: inset 0 1px 1px rgba(255,255,255,0.2)`).
+
+### Candidate Cards & Screen Density
+- components.css & student.js: Overhaul `.candidate-card` to be extremely compact so that all male/female candidates fit on a single 6-inch screen without needing much scrolling.
+- Reduce avatar sizes from ~40px to ~28px. Reduce paddings and text sizes inside the candidate cards (e.g., Name: 13px, Roll No: 11px). Tighten the gap between cards.
+
+### JavaScript Dynamic Scroll & iOS Keyboard
+- ui.js: Create a `setupDynamicBottomNav()` utility function. Attach a `scroll` event listener to track `lastScrollY`. Scrolling down adds the `.nav-hidden` class to the bottom nav. Scrolling up or tapping the bottom screen area removes it.
+- iOS Keyboard Handling: Add event listeners for `focus` and `blur` on all `input` elements. When an input is focused (keyboard slides up), we will add the `.nav-hidden` class to ensure the bottom nav doesn't float on top of the keyboard and block the text fields.
+- admin.js & student.js: Update HTML injection templates via `render()`. Move the `<nav>` outside the content wrapper to the bottom. Move the `<button id="logout-btn">` into the top header element alongside the user's email. Call `setupDynamicBottomNav()` after rendering.
+
+### Logout Experience
+- auth.js & student.js: Update the `logout()` function. Before redirecting to the login page, render a crisp "Successfully Logged Out" screen.
+- Supabase Auth uses `localStorage` to store session tokens, not traditional cookies. Calling `signOut()` clears this local storage securely.
+
+### Email Templates
+- Supabase Email Template (Magic Link): Provide a revised HTML template that uses `width: 100%; max-width: 600px;` so it fills out beautifully on a 6-inch phone instead of sitting tightly in the center.
+- send-emails/index.ts: Ensure the candidate lists rendered inside the `VOTING_STARTED` email use compact padding and 100% width, matching the UI's high-density GenZ aesthetic.

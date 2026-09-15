@@ -1,7 +1,6 @@
 /* ==========================================================
    IPE VOTING SYSTEM
-   student.css — Student Portal & Login
-   Premium university dark theme
+   student.css — Student Portal & Login (Compact)
 ========================================================== */
 
 /* ==========================================
@@ -9,25 +8,32 @@
 ========================================== */
 
 .login-page {
+    min-height: 100vh;
     min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 24px;
-    background: var(--bg-base);
+    padding: 20px;
+    background-color: var(--bg-base);
     background-image:
-        radial-gradient(ellipse 60% 50% at 50% -10%, rgba(59,126,248,0.18) 0%, transparent 70%);
+        radial-gradient(at 0% 0%, rgba(59, 126, 248, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(124, 106, 247, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(59, 126, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(124, 106, 247, 0.08) 0px, transparent 50%);
+    background-attachment: fixed;
 }
 
 .login-card {
     width: 100%;
-    max-width: 440px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-strong);
+    max-width: 420px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-xl);
-    box-shadow: var(--shadow-lg);
-    padding: 44px 40px;
-    animation: fadeUp 0.45s ease both;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 32px 28px;
+    animation: fadeUp 0.4s ease both;
 }
 
 .login-logo {
@@ -35,20 +41,35 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
 }
 
 .login-logo-mark {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--r-sm);
-    background: var(--primary);
+    width: 48px;
+    height: 48px;
+    border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--primary), var(--accent));
     color: white;
-    font-size: .75rem;
+    font-size: 1rem;
     font-weight: 800;
     letter-spacing: 0.04em;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-logo-mark::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
 }
 
 .login-logo-text {
@@ -58,95 +79,159 @@
 }
 
 .login-logo-text strong {
-    font-size: .94rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--text), var(--text-2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .login-logo-text small {
-    font-size: .72rem;
+    font-size: .75rem;
     color: var(--text-2);
+    font-weight: 500;
 }
 
 .login-title {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: 800;
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-family: var(--font-display);
 }
 
 .login-subtitle {
     text-align: center;
     color: var(--text-2);
-    font-size: .9rem;
-    line-height: 1.6;
-    margin-bottom: 32px;
+    font-size: .85rem;
+    line-height: 1.5;
+    margin-bottom: 24px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 14px;
 }
 
 .form-group label {
-    font-size: .84rem;
+    font-size: .82rem;
     font-weight: 600;
     color: var(--text-2);
 }
 
 .form-group input {
     width: 100%;
-    padding: 13px 15px;
+    padding: 10px 12px;
     border-radius: var(--r-sm);
     border: 1px solid var(--border);
     background: var(--bg-surface);
     color: var(--text);
-    font-size: .95rem;
+    font-size: .9rem;
     transition: border-color var(--t-base);
 }
 
-.form-group input::placeholder { color: var(--text-muted); }
-.form-group input:focus { border-color: var(--primary); }
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+}
 
 #continue-btn {
     width: 100%;
-    padding: 14px;
+    padding: 11px;
     border-radius: var(--r-sm);
     background: var(--primary);
     color: white;
-    font-size: .95rem;
+    font-size: .9rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
     transition: var(--t-base);
 }
 
-#continue-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
-#continue-btn:active { transform: translateY(0); }
-#continue-btn:disabled { opacity: .65; cursor: wait; transform: none; }
-
-.error-message {
-    min-height: 18px;
-    margin-top: 4px;
-    color: var(--danger);
-    font-size: .82rem;
+#continue-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
 }
 
-/* Shared submit button override on login card */
-.login-card form button { width: 100%; }
+#continue-btn:active {
+    transform: translateY(0);
+}
+
+#continue-btn:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+}
+
+.error-message {
+    min-height: 16px;
+    margin-top: 4px;
+    color: var(--danger);
+    font-size: .8rem;
+}
+
+.login-card form button[type="submit"] {
+    width: 100%;
+}
+
+.login-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 3px;
+    margin: 14px 0 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-surface-2);
+}
+
+.login-selector .login-role {
+    width: 100% !important;
+    padding: 8px 10px !important;
+    border-radius: var(--r-sm) !important;
+    background: transparent !important;
+    color: var(--text-2) !important;
+    font-size: .82rem;
+    font-weight: 600;
+    transition: var(--t-fast);
+    text-align: center;
+}
+
+.login-selector .login-role.is-selected {
+    background: var(--primary) !important;
+    color: #fff !important;
+    box-shadow: var(--shadow-sm);
+}
+
+.login-role-description {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .78rem;
+    line-height: 1.4;
+    margin-bottom: 14px;
+    min-height: 32px;
+}
 
 .dashboard-note {
     text-align: center;
     color: var(--text-2);
-    font-size: .88rem;
-    line-height: 1.6;
-    margin-bottom: 26px;
+    font-size: .84rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 480px) {
-    .login-card { padding: 32px 22px; }
-    .login-title { font-size: 1.45rem; }
+    .login-card {
+        padding: 24px 18px;
+    }
+
+    .login-title {
+        font-size: 1.3rem;
+    }
 }
 
 
@@ -155,10 +240,19 @@
 ========================================== */
 
 .election-shell {
-    width: min(1100px, 100%);
+    width: min(1000px, 100%);
+    min-height: 100vh;
     min-height: 100dvh;
     margin: 0 auto;
-    padding: 36px 24px 72px;
+    padding: 20px 16px calc(96px + env(safe-area-inset-bottom, 0px));
+    position: relative;
+    z-index: 1;
+}
+
+body:has(.election-shell),
+body:has(.success-page),
+body:has(.results-shell) {
+    background: transparent;
 }
 
 /* ==========================================
@@ -167,45 +261,49 @@
 
 .election-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 36px;
-    flex-wrap: nowrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
 }
 
 .election-header-text {
-    flex: 1 1 0;
-    min-width: 0; /* critical — prevents flex child from overflowing */
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .eyebrow {
-    font-size: .72rem;
+    font-size: .7rem;
     font-weight: 700;
-    letter-spacing: .14em;
+    letter-spacing: .12em;
     text-transform: uppercase;
-    color: var(--primary);
-    background: var(--primary-dim);
-    display: inline-block;
+    color: #86efac;
+    background: rgba(50, 215, 75, 0.15);
+    border: 1px solid rgba(50, 215, 75, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 3px 10px;
     border-radius: var(--r-full);
+    animation: shimmer 2s ease infinite;
 }
 
 .election-header h1 {
-    margin-top: 10px;
-    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    margin-top: 6px;
+    font-size: clamp(1.3rem, 3.5vw, 1.8rem);
     font-weight: 800;
     font-family: var(--font-display);
-    line-height: 1.15;
+    line-height: 1.2;
 }
 
 /* --- Voter identity badge --- */
 .voter-badge {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 12px;
-    padding: 5px 12px 5px 5px;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 4px 10px 4px 4px;
     border: 1px solid var(--border);
     border-radius: var(--r-full);
     background: var(--bg-surface);
@@ -216,41 +314,40 @@
 .voter-avatar {
     display: inline-flex;
     flex-shrink: 0;
-    width: 26px;
-    height: 26px;
+    width: 22px;
+    height: 22px;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     background: var(--primary);
     color: white;
-    font-size: .7rem;
+    font-size: .65rem;
     font-weight: 800;
     text-transform: uppercase;
 }
 
 .voter-email {
-    font-size: .83rem;
+    font-size: .8rem;
     color: var(--text-2);
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 300px;
+    max-width: 280px;
 }
 
 /* Logout button */
 .logout-button {
     flex: 0 0 auto;
-    padding: 9px 16px;
+    padding: 7px 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     background: transparent;
     color: var(--text-2);
-    font-size: .84rem;
+    font-size: .82rem;
     font-weight: 500;
     white-space: nowrap;
     align-self: flex-start;
-    margin-top: 4px;
 }
 
 .logout-button:hover {
@@ -266,109 +363,173 @@
 
 .vote-form {
     display: grid;
-    gap: 20px;
+    gap: 16px;
 }
 
 .rank-instruction {
-    padding: 14px 18px;
+    padding: 10px 14px;
     border-radius: var(--r-sm);
     background: var(--primary-dim);
-    border: 1px solid rgba(59,126,248,0.2);
-    font-size: .9rem;
+    border: 1px solid rgba(59, 126, 248, 0.2);
+    font-size: .85rem;
     color: var(--text-2);
 }
 
-.rank-instruction strong { color: var(--text); }
+.rank-instruction strong {
+    color: var(--text);
+}
 
 /* ==========================================
    VOTE SECTION CARD
 ========================================== */
 
 .vote-section {
-    border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-surface) 100%);
-    box-shadow: var(--shadow-sm);
-    padding: 24px;
+    border: 1px solid var(--glass-border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--r-xl);
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    box-shadow: var(--shadow-glass);
+    padding: 20px;
+    margin-bottom: 16px;
     transition: border-color var(--t-base);
 }
 
 .vote-section:focus-within {
-    border-color: var(--border-strong);
+    border-color: rgba(255, 255, 255, 0.15);
+    border-left-color: var(--gold);
 }
 
 .section-heading {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
 .section-num {
     display: grid;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     place-items: center;
     border-radius: 50%;
     background: var(--primary-dim);
     color: var(--primary);
-    font-size: .75rem;
+    font-size: .7rem;
     font-weight: 800;
-    border: 1px solid rgba(59,126,248,0.25);
+    border: 1px solid rgba(59, 126, 248, 0.25);
 }
 
 /* legacy class support */
-.section-heading > span:not(.section-num) {
+.section-heading>span:not(.section-num) {
     display: grid;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     flex-shrink: 0;
     place-items: center;
     border-radius: 50%;
     background: var(--primary-dim);
     color: var(--primary);
-    font-size: .75rem;
+    font-size: .7rem;
     font-weight: 800;
 }
 
-.section-heading h2 { font-size: 1.15rem; font-weight: 700; }
-.section-heading p { margin-top: 2px; color: var(--text-2); font-size: .85rem; }
+.section-heading h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.section-heading p {
+    margin-top: 2px;
+    color: var(--text-2);
+    font-size: .82rem;
+}
 
 /* ==========================================
    CANDIDATE GRID & CARDS
+   Strategy: 2 columns on mobile (names readable),
+   scale up on larger screens. Cards use clamp()
+   for heights so they auto-adapt to viewport.
 ========================================== */
 
 .candidate-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(6px, 1.5vw, 12px);
+}
+
+.candidate-mark {
+    display: grid;
+    place-items: center;
+    width: clamp(26px, 6vw, 34px);
+    height: clamp(26px, 6vw, 34px);
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: linear-gradient(160deg, rgba(96,165,250,0.45), rgba(37,99,235,0.18));
+    border: 1px solid rgba(255,255,255,0.22);
+    color: #e8f1ff;
+    font-size: clamp(0.62rem, 1.6vw, 0.8rem);
+    font-weight: 800;
+    letter-spacing: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
 }
 
 .candidate-card {
     position: relative;
     display: flex;
-    min-height: 88px;
+    min-height: clamp(52px, 10vh, 72px);
     align-items: center;
-    gap: 12px;
-    padding: 15px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-md);
-    background: var(--bg-surface);
+    gap: clamp(6px, 1.5vw, 10px);
+    padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 14px);
+    border-radius: clamp(12px, 3vw, 18px);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 8px 24px rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
-    transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast), box-shadow var(--t-base);
+    transition: transform var(--t-fast), box-shadow var(--t-base), background var(--t-base), border-color var(--t-fast);
 }
 
 .candidate-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-strong);
-    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px) scale(1.01);
+    background: rgba(17, 31, 54, 0.7);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.15);
 }
 
 .candidate-card:has(input:checked) {
-    border-color: var(--primary);
-    background: var(--primary-dim);
-    box-shadow: 0 0 0 1px var(--primary-glow);
+    background: rgba(255, 214, 10, 0.12);
+    box-shadow: inset 0 0 0 1px var(--gold), 0 8px 32px rgba(255, 214, 10, 0.16), inset 0 0 20px rgba(255, 214, 10, 0.08);
+    transform: translateY(-2px);
+    border-color: rgba(255, 214, 10, 0.45);
+}
+
+.candidate-card:has(input:checked) .candidate-mark {
+    background: linear-gradient(160deg, #ffd60a, #d4af37);
+    color: #0d1b2e;
+    border-color: rgba(255, 214, 10, 0.7);
+}
+
+.candidate-card:has(input:checked)::after {
+    content: "✓";
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #ffd60a, #d4af37);
+    color: #0d1b2e;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 4px 10px rgba(255, 214, 10, 0.4);
+    z-index: 2;
+    animation: elastic-bounce 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
 
 .candidate-card input {
@@ -379,64 +540,132 @@
 }
 
 .candidate-radio {
-    width: 20px;
-    height: 20px;
-    flex: 0 0 auto;
-    border: 2px solid var(--border-strong);
-    border-radius: 50%;
-    transition: border-color var(--t-base);
+    display: none;
 }
 
-.candidate-card:has(input:checked) .candidate-radio {
-    border: 6px solid var(--primary);
-}
-
-/* Candidate avatar initials */
-.candidate-avatar {
-    display: flex;
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    font-size: .78rem;
-    font-weight: 700;
-    color: var(--text-2);
-    text-transform: uppercase;
-}
-
-.candidate-card:has(input:checked) .candidate-avatar {
-    background: var(--primary-dim);
-    border-color: var(--primary);
-    color: var(--primary);
-}
 
 .candidate-details {
     display: grid;
-    gap: 2px;
+    gap: 1px;
     min-width: 0;
+    flex: 1;
 }
 
 .candidate-details strong {
-    font-size: .92rem;
-    font-weight: 600;
+    display: block;
+    color: var(--text);
+    font-size: clamp(11px, 2.8vw, 14px);
+    font-weight: 700;
+    margin-bottom: 0;
+    text-transform: capitalize;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 .candidate-details small {
     color: var(--text-2);
-    font-size: .78rem;
+    font-size: clamp(9px, 2.2vw, 12px);
 }
 
 .empty-candidates {
     color: var(--text-muted);
-    font-size: .88rem;
-    padding: 8px 0;
+    font-size: .84rem;
+    padding: 6px 0;
+}
+
+/* ==========================================
+   RANKED VOTING UI
+========================================== */
+
+.drag-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.drag-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-surface);
+    user-select: none;
+    touch-action: none;
+    cursor: grab;
+    transition: var(--t-fast);
+}
+
+.drag-card:hover {
+    border-color: var(--primary);
+    background: var(--bg-surface-2);
+}
+
+.drag-card:active {
+    cursor: grabbing;
+}
+
+.drag-card.is-dragging {
+    opacity: 0.85;
+    box-shadow: var(--shadow-md);
+    background: var(--primary-dim);
+    border-color: var(--primary);
+    transform: scale(1.02);
+    z-index: 50;
+}
+
+.drag-placeholder {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--r-md);
+    background: rgba(59, 126, 248, 0.05);
+}
+
+.drag-handle {
+    display: grid;
+    place-items: center;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: grab;
+    padding: 0 2px;
+}
+
+.drag-card:active .drag-handle {
+    cursor: grabbing;
+}
+
+.rank-select {
+    margin-left: auto;
+    padding: 5px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--text);
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.rank-select:focus {
+    border-color: var(--primary);
+}
+
+.rank-badge {
+    margin-left: auto;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-dim);
+    padding: 3px 8px;
+    border-radius: var(--r-full);
+    white-space: nowrap;
+}
+
+.rank-label {
+    color: var(--primary);
+    font-weight: 600;
 }
 
 /* ==========================================
@@ -445,65 +674,79 @@
 
 .write-in {
     display: grid;
-    gap: 8px;
-    margin-top: 16px;
-    padding-top: 16px;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
 }
 
 .write-in label {
-    font-size: .88rem;
+    font-size: .84rem;
     font-weight: 600;
     color: var(--text-2);
 }
 
-.write-in label span { color: var(--text-muted); font-weight: 400; }
+.write-in label span {
+    color: var(--text-muted);
+    font-weight: 400;
+}
 
 .write-in-input {
-    width: min(360px, 100%);
-    padding: 11px 14px;
+    width: min(320px, 100%);
+    padding: 9px 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     background: var(--bg-surface);
     color: var(--text);
-    font-size: .92rem;
+    font-size: .88rem;
     transition: border-color var(--t-base);
 }
 
-.write-in-input:focus { border-color: var(--primary); }
+.write-in-input:focus {
+    border-color: var(--primary);
+}
 
 /* ==========================================
    VOTE ERROR & SUBMIT
 ========================================== */
 
 .vote-error {
-    min-height: 22px;
+    min-height: 18px;
     color: #fca5a5;
-    font-size: .88rem;
+    font-size: .84rem;
     font-weight: 500;
 }
 
 .submit-vote {
     justify-self: end;
-    min-width: 220px;
+    min-width: 200px;
     padding: 14px 24px;
-    border-radius: var(--r-sm);
-    background: var(--primary);
-    color: white;
+    border-radius: var(--r-md);
+    background: linear-gradient(135deg, #ffd60a, #d4af37);
+    color: #0d1b2e;
     font-size: .95rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-weight: 800;
+    letter-spacing: 0.03em;
     transition: var(--t-base);
+    box-shadow: 0 4px 16px rgba(255, 214, 10, 0.3);
+    border: 1px solid rgba(255, 214, 10, 0.4);
 }
 
 .submit-vote:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px var(--primary-glow);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(255, 214, 10, 0.4);
 }
 
-.submit-vote:active { transform: translateY(0); }
-.submit-vote:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.submit-vote:active {
+    transform: translateY(0);
+}
+
+.submit-vote:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
 
 
 /* ==========================================
@@ -516,10 +759,12 @@
     inset: 0;
     display: grid;
     place-items: center;
-    padding: 20px;
+    padding: 16px;
 }
 
-.modal[hidden] { display: none; }
+.modal[hidden] {
+    display: none;
+}
 
 .modal-backdrop {
     position: absolute;
@@ -532,83 +777,111 @@
 .modal-card {
     position: relative;
     z-index: 1;
-    width: min(440px, 100%);
-    padding: 32px;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--r-xl);
-    background: var(--bg-card);
-    box-shadow: var(--shadow-lg);
+    width: min(400px, 100%);
+    padding: 24px;
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    background: rgba(12, 20, 40, 0.78);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    box-shadow: var(--shadow-glass);
     text-align: center;
-    animation: scaleIn 0.25s ease both;
+    animation: scaleIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .modal-icon {
     display: grid;
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     place-items: center;
-    margin: 0 auto 16px;
+    margin: 0 auto 12px;
     border-radius: var(--r-md);
     background: var(--primary-dim);
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
-.modal-card h2 { font-size: 1.3rem; font-weight: 700; }
-.modal-card .modal-intro { margin: 8px 0 20px; color: var(--text-2); font-size: .9rem; }
+.modal-card h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.modal-card .modal-intro {
+    margin: 6px 0 14px;
+    color: var(--text-2);
+    font-size: .85rem;
+}
 
 .vote-review {
     display: grid;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 12px;
     text-align: left;
 }
 
 .review-selection {
     display: grid;
-    gap: 3px;
-    padding: 13px 15px;
+    gap: 2px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     background: var(--bg-surface);
 }
 
 .review-category {
-    font-size: .72rem;
+    font-size: .7rem;
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--primary);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
-.review-selection strong { font-size: .98rem; }
-.review-selection span { color: var(--text-2); font-size: .85rem; }
+.review-selection strong {
+    display: block;
+    font-size: .95rem;
+    margin-bottom: 2px;
+    text-transform: capitalize;
+}
+
+.review-selection span {
+    color: var(--text-2);
+    font-size: .82rem;
+}
 
 .modal-card .vote-warning {
-    margin: 0 0 20px;
+    margin: 0 0 14px;
     color: var(--warning);
-    font-size: .85rem;
+    font-size: .82rem;
     line-height: 1.5;
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 12px;
 }
 
 .secondary-button {
-    padding: 13px 18px;
-    border: 1px solid var(--border);
-    border-radius: var(--r-sm);
-    background: transparent;
+    padding: 12px 20px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-md);
+    background: var(--bg-surface-2);
     color: var(--text);
     font-weight: 600;
-    font-size: .88rem;
+    font-size: .95rem;
 }
 
-.secondary-button:hover { border-color: var(--border-strong); background: var(--bg-surface); }
-.modal-actions .submit-vote { min-width: 0; }
+.secondary-button:hover {
+    border-color: var(--primary);
+    background: var(--bg-card);
+}
+
+.modal-actions .submit-vote {
+    min-width: 120px;
+    padding: 12px 24px;
+    font-size: .95rem;
+    border-radius: var(--r-md);
+}
 
 
 /* ==========================================
@@ -617,51 +890,54 @@
 
 .state-card,
 .success-card {
-    width: min(520px, 100%);
-    margin: 10vh auto 0;
-    padding: 48px 36px;
+    width: min(460px, 100%);
+    margin: 8vh auto 0;
+    padding: 32px 24px;
     text-align: center;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-xl);
-    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-surface) 100%);
-    box-shadow: var(--shadow-lg);
-    animation: fadeUp 0.45s ease both;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: fadeUp 0.4s ease both;
 }
 
 .state-icon {
     display: grid;
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
     place-items: center;
-    margin: 0 auto 20px;
-    border-radius: var(--r-lg);
+    margin: 0 auto 14px;
+    border-radius: var(--r-md);
     background: var(--primary-dim);
-    border: 1px solid rgba(59,126,248,0.2);
-    font-size: 2rem;
+    border: 1px solid rgba(59, 126, 248, 0.2);
+    font-size: 1.6rem;
 }
 
 .state-card h2,
 .success-card h1 {
-    font-size: 1.6rem;
+    font-size: 1.35rem;
     font-weight: 800;
     font-family: var(--font-display);
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .state-card p,
 .success-card p {
-    margin: 0 auto 20px;
+    margin: 0 auto 14px;
     color: var(--text-2);
-    line-height: 1.7;
-    max-width: 340px;
+    line-height: 1.6;
+    max-width: 320px;
+    font-size: .88rem;
 }
 
 .state-card small,
 .success-card small {
     display: block;
     color: var(--text-muted);
-    font-size: .82rem;
-    margin-bottom: 22px;
+    font-size: .78rem;
+    margin-bottom: 14px;
     word-break: break-all;
 }
 
@@ -669,35 +945,35 @@
 .countdown-timer {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin: 20px 0;
+    gap: 10px;
+    margin: 14px 0;
 }
 
 .countdown-unit {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 56px;
-    padding: 12px 8px;
+    min-width: 50px;
+    padding: 10px 6px;
     border-radius: var(--r-md);
     background: var(--bg-surface);
     border: 1px solid var(--border);
 }
 
 .countdown-unit strong {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     line-height: 1;
 }
 
 .countdown-unit span {
-    font-size: .65rem;
+    font-size: .6rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: .1em;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: 3px;
 }
 
 
@@ -706,118 +982,708 @@
 ========================================== */
 
 .success-page {
+    min-height: 100vh;
     min-height: 100dvh;
     display: grid;
     place-items: center;
-    padding: 24px;
+    padding: 20px;
 }
 
-.success-card { margin: 0; }
+.success-card {
+    margin: 0;
+}
 
 .success-tick {
     display: grid;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     place-items: center;
-    margin: 0 auto 24px;
+    margin: 0 auto 16px;
     border: 3px solid var(--success);
     border-radius: 50%;
     color: var(--success);
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 700;
-    animation: tick-in .55s cubic-bezier(.2, .9, .3, 1) both;
+    animation: tick-in .5s cubic-bezier(.2, .9, .3, 1) both, heartbeat 1.5s ease-in-out infinite;
     background: var(--success-dim);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
 }
 
 .vote-timestamp {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: var(--r-full);
     background: var(--bg-surface);
     border: 1px solid var(--border);
     color: var(--text-2);
-    font-size: .82rem;
-    margin-bottom: 24px;
+    font-size: .78rem;
+    margin-bottom: 16px;
 }
-
 
 /* ==========================================
-   DRAG AND DROP RANKING
+   FINAL ROUND TAG
 ========================================== */
 
-.drag-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.drag-card {
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-}
-
-.drag-card:active { cursor: grabbing; }
-
-.drag-card.is-dragging {
-    opacity: 0.88;
-    box-shadow: var(--shadow-md);
-    background: var(--primary-dim);
-    border-color: var(--primary);
-    transform: scale(1.02);
-    z-index: 50;
-}
-
-.drag-placeholder {
-    border: 2px dashed var(--border-strong);
-    border-radius: var(--r-md);
-    background: rgba(59,126,248,0.05);
-}
-
-.drag-handle {
-    display: grid;
-    place-items: center;
-    color: var(--text-muted);
-    font-size: 1.3rem;
-    cursor: grab;
-    padding: 0 4px;
-}
-
-.drag-card:active .drag-handle { cursor: grabbing; }
-
-.rank-badge {
-    margin-left: auto;
-    font-size: .82rem;
+.final-round-tag {
+    display: inline-block;
+    font-size: .6rem;
     font-weight: 700;
-    color: var(--primary);
-    background: var(--primary-dim);
-    padding: 3px 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--warning);
+    background: var(--warning-dim);
+    padding: 2px 8px;
     border-radius: var(--r-full);
-    white-space: nowrap;
+    vertical-align: middle;
+    margin-left: 6px;
+    border: 1px solid rgba(255, 159, 10, 0.3);
+    animation: pulse-ring 2s ease-out infinite;
 }
-
-.rank-label { color: var(--primary); font-weight: 600; }
 
 
 /* ==========================================
-   RESPONSIVE
+   RESPONSIVE — MOBILE PERFECTION
 ========================================== */
+
+/* Extra small devices (iPhone SE, small phones) */
+@media (max-width: 375px) {
+    .election-shell {
+        padding: 10px 8px calc(86px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .election-header h1 {
+        font-size: 1rem;
+    }
+
+    .candidate-grid:not(.drag-container) {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-vote:not(.modal-actions .submit-vote) {
+        font-size: 0.9rem;
+        padding: 12px 16px;
+    }
+}
+
+/* Small devices (standard phones) */
+@media (min-width: 376px) and (max-width: 480px) {
+    .election-shell {
+        padding: 12px 10px calc(86px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .candidate-grid:not(.drag-container) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Medium devices (tablets, large phones) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .election-shell {
+        padding: 16px 20px 60px;
+    }
+
+    .candidate-grid:not(.drag-container) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: static;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+}
+
+/* Large devices (desktops) */
+@media (min-width: 769px) {
+    .election-shell {
+        padding: 24px 20px 48px;
+    }
+
+    .candidate-grid:not(.drag-container) {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: static;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+}
+
+/* Samsung Fold and other foldable devices */
+@media (min-width: 300px) and (max-width: 400px) and (orientation: portrait) {
+    .election-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .voter-badge {
+        width: 100%;
+    }
+
+    .logout-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 @media (max-width: 600px) {
-    .election-shell { padding: 20px 14px 48px; }
-    .election-header { margin-bottom: 22px; flex-wrap: wrap; }
-    .election-header-text { min-width: 0; }
-    .voter-email { max-width: 200px; }
-    .election-header h1 { font-size: 1.45rem; }
-    .vote-section { padding: 18px 14px; }
-    .candidate-grid { grid-template-columns: 1fr; }
-    .submit-vote { width: 100%; justify-self: stretch; }
-    .modal-card { padding: 24px 18px; }
-    .modal-actions { flex-direction: column-reverse; }
-    .modal-actions button { width: 100%; }
-    .state-card, .success-card { padding: 32px 20px; }
-    .countdown-timer { gap: 8px; }
-    .countdown-unit { min-width: 48px; }
-    .countdown-unit strong { font-size: 1.4rem; }
+
+    /* ---- Shell: tight padding, room for sticky btn + safe area ---- */
+    .election-shell {
+        padding: 12px 10px calc(86px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* ---- Header: compact single row ---- */
+    .election-header {
+        margin-bottom: 10px;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .election-header h1 {
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+
+    .final-round-tag {
+        font-size: .5rem;
+        padding: 1px 5px;
+        margin-left: 4px;
+    }
+
+    .voter-badge {
+        margin-top: 3px;
+        padding: 2px 6px 2px 2px;
+        gap: 4px;
+    }
+
+    .voter-avatar {
+        width: 16px;
+        height: 16px;
+        font-size: .5rem;
+    }
+
+    .voter-email {
+        max-width: 130px;
+        font-size: .68rem;
+    }
+
+    .logout-button {
+        padding: 5px 10px;
+        font-size: .72rem;
+        border-radius: var(--r-sm);
+    }
+
+    /* ---- Vote Form: tighter gap ---- */
+    .vote-form {
+        gap: 12px;
+    }
+
+    /* ---- Vote Sections: compact glass cards ---- */
+    .vote-section {
+        padding: 14px;
+        border-radius: var(--r-md);
+    }
+
+    .section-heading {
+        margin-bottom: 8px;
+        gap: 6px;
+    }
+
+    /* Section numbers removed */
+
+    .section-heading h2 {
+        font-size: .9rem;
+    }
+
+    .section-heading p {
+        font-size: .68rem;
+        margin-top: 0;
+    }
+
+    /* ---- Candidate Grid: flexible columns ---- */
+    .candidate-grid:not(.drag-container) {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 8px;
+    }
+
+    /* ---- Candidate Card: vertical tile ---- */
+    .candidate-card:not(.drag-card) {
+        padding: 6px 4px;
+        gap: 4px;
+        min-height: auto;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        border-radius: var(--r-md);
+        background: rgba(17, 31, 54, 0.4);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Avatar removed */
+
+    /* Name + Roll: centered */
+    .candidate-card:not(.drag-card) .candidate-details {
+        text-align: center;
+        gap: 2px;
+    }
+
+    .candidate-card:not(.drag-card) .candidate-details strong {
+        font-size: 14px;
+        font-weight: 800;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    .candidate-card:not(.drag-card) .candidate-details small {
+        font-size: 11px;
+        color: var(--text-muted);
+    }
+
+    /* Selected card gold glow (disable scale on mobile for stability) */
+    .candidate-card:has(input:checked) {
+        transform: none;
+        background: rgba(255, 214, 10, 0.1);
+        box-shadow: inset 0 0 0 1px var(--gold), 0 8px 24px rgba(255, 214, 10, 0.15), inset 0 0 20px rgba(255, 214, 10, 0.08);
+    }
+
+    .candidate-card:has(input:checked)::after {
+        top: -6px;
+        right: -6px;
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+    }
+
+    /* ---- Drag/Ranked: compact rows ---- */
+    .candidate-grid.drag-container {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .drag-card {
+        padding: 8px 10px;
+        min-height: auto;
+        gap: 6px;
+    }
+
+
+    .drag-handle {
+        font-size: 1rem;
+    }
+
+    .rank-select {
+        padding: 3px 5px;
+        font-size: .72rem;
+    }
+
+    .rank-badge {
+        padding: 2px 6px;
+        font-size: .7rem;
+    }
+
+    .rank-instruction {
+        padding: 6px 10px;
+        font-size: .72rem;
+    }
+
+    /* ---- Write-in: compact ---- */
+    .write-in {
+        margin-top: 8px;
+        padding-top: 8px;
+        gap: 4px;
+    }
+
+    .write-in label {
+        font-size: .75rem;
+    }
+
+    .write-in-input {
+        padding: 9px 12px;
+        font-size: 16px; /* 16px prevents iOS Safari from automatically zooming into inputs */
+        width: 100%;
+        border-radius: var(--r-sm);
+    }
+
+    /* ---- Floating Submit Button (gold gradient + glow) ---- */
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: fixed;
+        bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 32px);
+        max-width: 400px;
+        padding: 15px 16px;
+        font-size: 1rem;
+        font-weight: 800;
+        border-radius: 14px;
+        z-index: 100;
+        box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.5), 0 4px 24px rgba(255, 214, 10, 0.3);
+        background: linear-gradient(135deg, #ffd60a, #d4af37);
+        color: #0d1b2e;
+        border: 1px solid rgba(255, 214, 10, 0.5);
+        letter-spacing: .03em;
+    }
+
+    .submit-vote:not(.modal-actions .submit-vote):hover {
+        transform: translateX(-50%) translateY(-2px);
+    }
+
+    .submit-vote:not(.modal-actions .submit-vote):active {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .vote-error {
+        font-size: .78rem;
+        text-align: center;
+        min-height: 14px;
+    }
+
+    /* ---- Confirmation Modal ---- */
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-card {
+        padding: 20px 14px;
+        width: 100%;
+        border-radius: 14px;
+    }
+
+    .modal-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+
+    .modal-card h2 {
+        font-size: 1.05rem;
+    }
+
+    .modal-card .modal-intro {
+        font-size: .78rem;
+        margin: 4px 0 10px;
+    }
+
+    .modal-card .vote-warning {
+        font-size: .75rem;
+        margin-bottom: 10px;
+    }
+
+    .vote-review {
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .review-selection {
+        padding: 8px 10px;
+    }
+
+    .review-category {
+        font-size: .62rem;
+    }
+
+    .review-selection strong {
+        font-size: .85rem;
+    }
+
+    .review-selection span {
+        font-size: .75rem;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 6px;
+    }
+
+    .modal-actions button {
+        width: 100%;
+        padding: 12px;
+        font-size: .9rem;
+        border-radius: 10px;
+        position: static !important;
+        transform: none !important;
+        box-shadow: none !important;
+        max-width: none !important;
+    }
+
+    .modal-actions .submit-vote {
+        background: linear-gradient(135deg, #ffd60a, #d4af37);
+        color: #0d1b2e;
+        border: 1px solid rgba(255, 214, 10, 0.4);
+    }
+
+    .secondary-button {
+        padding: 11px;
+        font-size: .85rem;
+        border-radius: 10px;
+    }
+
+    /* ---- State/Success Cards ---- */
+    .state-card,
+    .success-card {
+        padding: 24px 16px;
+        margin: 3vh auto 0;
+        width: 100%;
+        border-radius: var(--r-lg);
+    }
+
+    .state-card h2,
+    .success-card h1 {
+        font-size: 1.2rem;
+    }
+
+    .state-card p,
+    .success-card p {
+        font-size: .82rem;
+        max-width: none;
+    }
+
+    .state-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+
+    .success-tick {
+        width: 52px;
+        height: 52px;
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+
+    .countdown-timer {
+        gap: 6px;
+        margin: 10px 0;
+    }
+
+    .countdown-unit {
+        min-width: 42px;
+        padding: 6px 4px;
+    }
+
+    .countdown-unit strong {
+        font-size: 1.15rem;
+    }
+
+    .countdown-unit span {
+        font-size: .55rem;
+    }
+
+    .vote-timestamp {
+        font-size: .72rem;
+        padding: 4px 10px;
+    }
+}
+
+/* ==========================================================
+   RESPONSIVE — EVERY SCREEN SIZE & ORIENTATION
+   Priority order: smallest → largest, portrait → landscape
+========================================================== */
+
+/* ── GLOBAL predictable grid (overrides) ── */
+.candidate-grid:not(.drag-container) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.candidate-grid.drag-container {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+}
+
+/* ── Samsung Fold closed / tiny portrait (≤319px) ── */
+@media (max-width: 319px) {
+    .election-shell { padding: 8px 6px calc(80px + env(safe-area-inset-bottom, 0px)); }
+    .election-header h1 { font-size: 0.88rem; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: 1fr; }
+    .vote-section { padding: 10px; border-radius: var(--r-md); }
+    .candidate-card { padding: 6px 8px; min-height: 44px; }
+    .candidate-mark { width: 22px; height: 22px; font-size: 0.58rem; }
+    .candidate-details strong { font-size: 11px; }
+    .candidate-details small { font-size: 9px; }
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: fixed; bottom: calc(12px + env(safe-area-inset-bottom)); left: 8px; right: 8px;
+        width: auto; max-width: none; transform: none; font-size: 0.85rem; padding: 12px;
+    }
+}
+
+/* ── Samsung Fold open / small portrait (320–374px) ── */
+@media (min-width: 320px) and (max-width: 374px) {
+    .election-shell { padding: 10px 8px calc(82px + env(safe-area-inset-bottom, 0px)); }
+    .election-header h1 { font-size: 0.96rem; line-height: 1.25; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+    .vote-section { padding: 12px; border-radius: var(--r-md); }
+    .candidate-card:not(.drag-card) {
+        padding: 7px 8px; min-height: 48px; gap: 6px;
+        flex-direction: column; text-align: center; align-items: center;
+    }
+    .candidate-card:not(.drag-card) .candidate-details { text-align: center; }
+    .candidate-card:not(.drag-card) .candidate-details strong { font-size: 11px; white-space: normal; }
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: fixed; bottom: calc(14px + env(safe-area-inset-bottom)); left: 10px; right: 10px;
+        width: auto; max-width: none; transform: none; font-size: 0.88rem; padding: 13px;
+    }
+}
+
+/* ── Standard phones portrait (375–479px) ── */
+@media (min-width: 375px) and (max-width: 479px) {
+    .election-shell { padding: 12px 10px calc(86px + env(safe-area-inset-bottom, 0px)); }
+    .election-header { margin-bottom: 10px; gap: 8px; }
+    .election-header h1 { font-size: 1.05rem; line-height: 1.3; }
+    .voter-badge { margin-top: 3px; padding: 2px 6px 2px 2px; gap: 4px; }
+    .voter-avatar { width: 17px; height: 17px; font-size: .52rem; }
+    .voter-email { max-width: 140px; font-size: .68rem; }
+    .logout-button { padding: 5px 10px; font-size: .72rem; }
+    .vote-form { gap: 12px; }
+    .vote-section { padding: 14px 12px; border-radius: var(--r-md); }
+    .section-heading { margin-bottom: 8px; gap: 6px; }
+    .section-heading h2 { font-size: .9rem; }
+    .section-heading p { font-size: .7rem; margin-top: 0; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .candidate-card:not(.drag-card) {
+        padding: 7px 6px; gap: 5px; min-height: auto;
+        flex-direction: column; text-align: center; align-items: center;
+    }
+    .candidate-card:not(.drag-card) .candidate-details { text-align: center; gap: 2px; }
+    .candidate-card:not(.drag-card) .candidate-details strong { font-size: 12px; white-space: normal; line-height: 1.2; }
+    .candidate-card:not(.drag-card) .candidate-details small { font-size: 10px; }
+    /* Floating submit button */
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: fixed;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        left: 12px; right: 12px;
+        width: auto; max-width: none;
+        transform: none; left: 12px; right: 12px;
+        padding: 15px 16px; font-size: 0.96rem; font-weight: 800;
+        border-radius: 14px; z-index: 100;
+        box-shadow: 0 -2px 20px rgba(0,0,0,0.5), 0 4px 24px rgba(255,214,10,0.3);
+    }
+    .submit-vote:not(.modal-actions .submit-vote):hover { transform: none; }
+    .submit-vote:not(.modal-actions .submit-vote):active { opacity: 0.9; }
+}
+
+/* ── Large phones portrait + small tablets (480–767px) ── */
+@media (min-width: 480px) and (max-width: 767px) {
+    .election-shell { padding: 16px 14px calc(86px + env(safe-area-inset-bottom, 0px)); }
+    .election-header h1 { font-size: 1.2rem; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .candidate-card { min-height: 60px; }
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: fixed;
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+        left: 16px; right: 16px;
+        width: auto; max-width: none; transform: none;
+        padding: 15px; font-size: 1rem; border-radius: 14px; z-index: 100;
+    }
+}
+
+/* ── Tablets portrait (768–1023px) ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .election-shell { padding: 20px 24px 60px; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: static; width: auto; max-width: none; transform: none;
+    }
+}
+
+/* ── Desktop (1024px+) ── */
+@media (min-width: 1024px) {
+    .election-shell { padding: 28px 24px 52px; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .submit-vote:not(.modal-actions .submit-vote) { position: static; width: auto; transform: none; }
+}
+
+@media (min-width: 1280px) {
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1920px) {
+    .election-shell { max-width: 1200px; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+}
+
+/* ── LANDSCAPE OVERRIDES ── */
+/* Phone landscape: side-by-side sections, 3 col grid */
+@media (orientation: landscape) and (max-height: 500px) {
+    .election-shell {
+        padding: 8px 12px calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+    .election-header { margin-bottom: 6px; }
+    .election-header h1 { font-size: 0.95rem; }
+    .vote-form { gap: 10px; }
+    .vote-section { padding: 10px 14px; margin-bottom: 10px; }
+    .section-heading { margin-bottom: 6px; }
+    .section-heading h2 { font-size: .88rem; }
+    .section-heading p { font-size: .68rem; }
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    .candidate-card { min-height: 44px; padding: 6px 8px; }
+    .candidate-mark { width: 24px; height: 24px; font-size: 0.6rem; }
+    .candidate-details strong { font-size: 11px; }
+    .submit-vote:not(.modal-actions .submit-vote) {
+        position: static; width: 100%; max-width: none; transform: none;
+        padding: 12px; font-size: 0.9rem; margin-top: 4px;
+    }
+}
+
+/* Tablet landscape: wider, more columns */
+@media (orientation: landscape) and (min-height: 501px) and (max-height: 900px) {
+    .candidate-grid:not(.drag-container) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .submit-vote:not(.modal-actions .submit-vote) { position: static; transform: none; width: auto; }
+}
+
+/* ── MOBILE MODAL OVERRIDES (portrait ≤600px) ── */
+@media (max-width: 600px) {
+    .vote-error { font-size: .78rem; text-align: center; min-height: 14px; }
+    .modal { padding: 10px; }
+    .modal-card { padding: 20px 14px; width: 100%; border-radius: 14px; }
+    .modal-icon { width: 36px; height: 36px; font-size: 1.1rem; margin-bottom: 8px; }
+    .modal-card h2 { font-size: 1.05rem; }
+    .modal-card .modal-intro { font-size: .78rem; margin: 4px 0 10px; }
+    .modal-card .vote-warning { font-size: .75rem; margin-bottom: 10px; }
+    .vote-review { gap: 6px; margin-bottom: 10px; }
+    .review-selection { padding: 8px 10px; }
+    .review-category { font-size: .62rem; }
+    .review-selection strong { font-size: .85rem; }
+    .review-selection span { font-size: .75rem; }
+    .modal-actions { flex-direction: column-reverse; gap: 6px; }
+    .modal-actions button {
+        width: 100%; padding: 12px; font-size: .9rem; border-radius: 10px;
+        position: static !important; transform: none !important;
+        box-shadow: none !important; max-width: none !important;
+    }
+    .modal-actions .submit-vote {
+        background: linear-gradient(135deg, #ffd60a, #d4af37);
+        color: #0d1b2e; border: 1px solid rgba(255,214,10,0.4);
+    }
+    .state-card, .success-card { padding: 24px 16px; margin: 3vh auto 0; width: 100%; border-radius: var(--r-lg); }
+    .state-card h2, .success-card h1 { font-size: 1.2rem; }
+    .state-card p, .success-card p { font-size: .82rem; max-width: none; }
+    .state-icon { width: 44px; height: 44px; font-size: 1.3rem; margin-bottom: 10px; }
+    .success-tick { width: 52px; height: 52px; font-size: 1.6rem; margin-bottom: 12px; }
+    .countdown-timer { gap: 6px; margin: 10px 0; }
+    .countdown-unit { min-width: 42px; padding: 6px 4px; }
+    .countdown-unit strong { font-size: 1.15rem; }
+    .countdown-unit span { font-size: .55rem; }
+    .vote-timestamp { font-size: .72rem; padding: 4px 10px; }
+    .write-in { margin-top: 8px; padding-top: 8px; gap: 4px; }
+    .write-in label { font-size: .75rem; }
+    .write-in-input { padding: 9px 12px; font-size: 16px; width: 100%; border-radius: var(--r-sm); }
+    .drag-card { padding: 8px 10px; min-height: auto; gap: 6px; }
+    .drag-handle { font-size: 1rem; }
+    .rank-select { padding: 3px 5px; font-size: .72rem; }
+    .rank-badge { padding: 2px 6px; font-size: .7rem; }
+    .rank-instruction { padding: 6px 10px; font-size: .72rem; }
+}
+
+/* ── Enhanced success tick ── */
+.success-tick {
+    animation: vote-success-ring 0.55s cubic-bezier(0.2, 0.9, 0.3, 1) both, vote-success-pulse 1.8s ease-in-out 0.55s infinite;
 }

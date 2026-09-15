@@ -1,112 +1,44 @@
 /* ==========================================================
    IPE Voting System
    config.js
-========================================================== */
+   ========================================================== */
 
-/* -----------------------------
-   Supabase
+ /* -----------------------------
+    Supabase Configuration
+    Priority:
+    1. window.ENV_CONFIG (from config.local.js - for local dev)
+    2. window.__ENV__ (injected at build time - for production)
+    3. Hardcoded fallback (DEVELOPMENT ONLY - DO NOT USE IN PRODUCTION)
 ------------------------------ */
 
-const SUPABASE_URL = "https://tcozghdncexmqambecrz.supabase.co";
+// Try to load from config.local.js (local development)
+const localConfig = window.ENV_CONFIG || {};
 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjb3pnaGRuY2V4bXFhbWJlY3J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNjU0NzAsImV4cCI6MjEwMDc0MTQ3MH0.iKSg_NAqDCemlHShSpByIqi-0qV-vDc7pp2XK6GLo2M";
+// Try to load from build-time injection (production)
+const buildConfig = window.__ENV__ || {};
 
-/* -----------------------------
-   Application
------------------------------- */
+// Configuration with fallbacks
+const SUPABASE_URL = buildConfig.SUPABASE_URL || localConfig.SUPABASE_URL || "https://tcozghdncexmqambecrz.supabase.co";
 
-const APP_NAME = "IPE Voting System";
+const SUPABASE_ANON_KEY = buildConfig.SUPABASE_ANON_KEY || localConfig.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRjb3pnaGRuY2V4bXFhbWJlY3J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNjU0NzAsImV4cCI6MjEwMDc0MTQ3MH0.iKSg_NAqDCemlHShSpByIqi-0qV-vDc7pp2XK6GLo2M";
 
-const ADMIN_EMAIL = "hitenaggarwal18@gmail.com";
+// Optional: Magic link redirect override
+const MAGIC_LINK_REDIRECT_OVERRIDE = buildConfig.MAGIC_LINK_REDIRECT || localConfig.MAGIC_LINK_REDIRECT;
 
-// Shared login validation rule. It accepts student addresses such as
-// hitena.ip.25@nitj.ac.in and is loaded before validation.js on both pages.
-const NIT_EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@nitj\.ac\.in$/i;
-window.NIT_EMAIL_REGEX = NIT_EMAIL_REGEX;
+// Optional: Admin email for local development (empty by default - production uses database)
+const configuredAdminEmail = buildConfig.ADMIN_EMAIL || localConfig.ADMIN_EMAIL || "";
 
-/* -----------------------------
-   Authentication
------------------------------- */
-
-const MAGIC_LINK_REDIRECT = window.location.origin;
-
-/* -----------------------------
-   Election Status
------------------------------- */
-
-const ELECTION_STATUS = {
-    DRAFT: "draft",
-    LIVE: "live",
-    CLOSED: "closed"
+// Expose config globally for other modules
+window.APP_CONFIG = {
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    MAGIC_LINK_REDIRECT_OVERRIDE,
+    ADMIN_EMAIL: configuredAdminEmail
 };
 
-/* -----------------------------
-   Candidate Positions
------------------------------- */
+// Warn if using hardcoded credentials in production-like environment
+if (typeof window !== "undefined" && window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1" && !buildConfig.SUPABASE_URL) {
+    console.warn("%c?? SECURITY WARNING: Using hardcoded Supabase credentials!", "color: #f59e0b; font-size: 1.2rem; font-weight: bold;");
+    console.warn("For production, inject SUPABASE_URL and SUPABASE_ANON_KEY at build time via window.__ENV__");
+}
 
-const POSITION = {
-    MALE: "Male CR",
-    FEMALE: "Female CR"
-};
-
-const VOTING_METHOD = {
-    SINGLE: "single_choice",
-    RANKED: "ranked_choice",
-    RANKED_FINAL_VS: "ranked_choice_final_vs"
-};
-
-const ELECTION_POSITIONS = {
-    MALE_FEMALE: "male_female",
-    MALE_ONLY: "male_only",
-    FEMALE_ONLY: "female_only"
-};
-
-/* -----------------------------
-   Toast Types
------------------------------- */
-
-const TOAST = {
-    SUCCESS: "success",
-    ERROR: "error",
-    INFO: "info",
-    WARNING: "warning"
-};
-
-/* -----------------------------
-   Messages
------------------------------- */
-
-const MESSAGE = {
-
-    INVALID_EMAIL:
-        "Please enter your NIT Jalandhar email.",
-
-    NOT_ALLOWED:
-        "You are not authorised to vote.",
-
-    MAGIC_LINK_SENT:
-        "Magic Link sent successfully. Check your email.",
-
-    LOGIN_FAILED:
-        "Unable to login.",
-
-    SESSION_EXPIRED:
-        "Session expired.",
-
-    ALREADY_VOTED:
-        "Your vote has already been recorded.",
-
-    VOTE_SUCCESS:
-        "Vote submitted successfully.",
-
-    SOMETHING_WENT_WRONG:
-        "Something went wrong."
-
-};
-
-Object.freeze(ELECTION_STATUS);
-Object.freeze(POSITION);
-Object.freeze(VOTING_METHOD);
-Object.freeze(ELECTION_POSITIONS);
-Object.freeze(TOAST);
-Object.freeze(MESSAGE);
