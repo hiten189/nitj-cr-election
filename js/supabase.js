@@ -1,159 +1,62 @@
-/* ==========================================================
-   IPE Voting System
-   supabase.js
-========================================================== */
-
-/* -----------------------------
-   Create Client
------------------------------- */
-
-const supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-);
-
-
-/* -----------------------------
-   Authentication
------------------------------- */
+// `window.supabase` belongs to the Supabase CDN. Keep the application client
+// under a distinct name so it is created once and never shadows that global.
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function getSession() {
-
-    const { data, error } = await supabase.auth.getSession();
-
-    if (error) {
-        console.error(error);
-        return null;
-    }
-
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error) throw error;
     return data.session;
-
 }
 
-
-async function getUser() {
-
-    const { data, error } = await supabase.auth.getUser();
-
-    if (error) {
-        console.error(error);
-        return null;
-    }
-
-    return data.user;
-
-}
-
+// Explicitly expose the shared session helper for every classic script on both pages.
+window.getSession = getSession;
 
 async function signOut() {
-
-    await supabase.auth.signOut();
-
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) throw error;
 }
 
-
-/* -----------------------------
-   Database
------------------------------- */
-
-async function getSettings() {
-
-    const { data, error } = await supabase
-        .from("settings")
-        .select("*")
-        .single();
-
-    if (error)
-        throw error;
-
-    return data;
-
+async function getActiveEmailRules() {
+    const { data, error } = await supabaseClient
+        .from("allowed_email_rules")
+        .select("rule_type, rule_value")
+        .eq("active", true);
+    if (error) throw error;
+    return data || [];
 }
-
-
-async function getCandidates() {
-
-    const { data, error } = await supabase
-        .from("candidates")
-        .select("*")
-        .eq("is_active", true)
-        .order("candidate_name");
-
-    if (error)
-        throw error;
-
-    return data;
-
-}
-
 
 async function hasAlreadyVoted(email) {
-
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
         .from("votes")
         .select("student_email")
         .eq("student_email", email)
+        .limit(1)
         .maybeSingle();
-
-    if (error)
-        throw error;
-
-    return !!data;
-
+    if (error) throw error;
+    return Boolean(data);
 }
 
-
-async function submitVote(vote) {
-
-    const { error } = await supabase
-        .from("votes")
-        .insert(vote);
-
-    if (error)
-        throw error;
-
-}
-
-
-/* -----------------------------
-   Admin
------------------------------- */
-
-async function getAllVotes() {
-
-    const { data, error } = await supabase
-        .from("votes")
-        .select("*");
-
-    if (error)
-        throw error;
-
+async function getElectionSettings() {
+    const { data, error } = await supabaseClient
+        .from("settings")
+        .select("election_name, election_status, allow_write_in_vote, write_in_roll_digits, results_published, voting_method, election_positions")
+        .limit(1)
+        .maybeSingle();
+    if (error) throw error;
     return data;
-
 }
 
-
-async function getAllowedEmailRules() {
-
-    const { data, error } = await supabase
-        .from("allowed_email_rules")
-        .select("*")
-        .order("id");
-
-    if (error)
-        throw error;
-
-    return data;
-
+async function getActiveCandidates() {
+    const { data, error } = await supabaseClient
+        .from("candidates")
+        .select("id, name, roll_number, position")
+        .eq("active", true)
+        .order("name");
+    if (error) throw error;
+    return data || [];
 }
 
-
-/* -----------------------------
-   Auth State Listener
------------------------------- */
-
-supabase.auth.onAuthStateChange((event) => {
-
-    console.log("Auth Event:", event);
-
-});
+async function saveVote(vote) {
+    const { error } = await supabaseClient.from("votes").insert(vote);
+    if (error) throw error;
+}

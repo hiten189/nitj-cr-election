@@ -1,0 +1,475 @@
+/* ==========================================================
+   IPE VOTING SYSTEM
+   results.css — Public Results Portal
+   Premium university election results page
+========================================================== */
+
+/* ==========================================
+   RESULTS SHELL
+========================================== */
+
+.results-shell {
+    max-width: 1020px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ==========================================
+   RESULTS HEADER / HERO
+========================================== */
+
+.results-hero {
+    text-align: center;
+    padding: 48px 24px 40px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+}
+
+.results-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    border-radius: var(--r-full);
+    background: var(--success-dim);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #86efac;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    animation: shimmer 2s ease infinite;
+}
+
+.results-hero h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    font-family: var(--font-display);
+    line-height: 1.15;
+    margin-bottom: 10px;
+}
+
+.results-hero p {
+    color: var(--text-2);
+    font-size: .95rem;
+    margin-bottom: 0;
+}
+
+.results-hero .logout-btn-float {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: .82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--t-base);
+}
+
+.results-hero .logout-btn-float:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+}
+
+
+/* ==========================================
+   FINAL ROUND BANNER
+========================================== */
+
+.final-round-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    border-radius: var(--r-md);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    font-size: .95rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 36px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+
+/* ==========================================
+   WINNER SECTION
+========================================== */
+
+.winners-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.winner-card {
+    position: relative;
+    padding: 32px 28px;
+    border-radius: var(--r-xl);
+    border: 1px solid rgba(245, 166, 35, 0.3);
+    background: linear-gradient(160deg, rgba(245,166,35,0.08) 0%, var(--bg-card) 60%);
+    box-shadow: 0 0 0 1px rgba(245,166,35,0.1), var(--shadow-md);
+    text-align: center;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+}
+
+/* Subtle shimmer overlay on winner card */
+.winner-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(245,166,35,0.04) 50%, transparent 100%);
+    animation: shimmer 3s ease infinite;
+    pointer-events: none;
+}
+
+.winner-trophy {
+    font-size: 3rem;
+    margin-bottom: 8px;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(245,166,35,0.4));
+}
+
+.winner-position-label {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: var(--r-full);
+    background: var(--gold-dim);
+    border: 1px solid rgba(245,166,35,0.3);
+    color: var(--gold);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.winner-avatar {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    place-items: center;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: var(--gold-dim);
+    border: 2px solid rgba(245,166,35,0.4);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--gold);
+    font-family: var(--font-display);
+}
+
+.winner-name {
+    font-size: 1.65rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+
+.winner-roll {
+    color: var(--text-2);
+    font-size: .88rem;
+    margin-bottom: 24px;
+}
+
+.winner-stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.winner-stat {
+    padding: 10px 18px;
+    border-radius: var(--r-md);
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--border);
+}
+
+.winner-stat span {
+    display: block;
+    font-size: .72rem;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.winner-stat strong {
+    font-size: 1.3rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    color: var(--text);
+}
+
+.winner-stat.highlight strong { color: var(--gold); }
+
+
+/* ==========================================
+   LEADERBOARD SECTION
+========================================== */
+
+.leaderboard-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 28px;
+}
+
+.leaderboard-card {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    animation: fadeUp 0.5s ease 0.15s both;
+}
+
+.leaderboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+}
+
+.leaderboard-header h2 { font-size: 1.05rem; font-weight: 700; }
+
+.total-votes-badge {
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: .76rem;
+    font-weight: 600;
+}
+
+/* Ranked note */
+.ranked-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--primary-dim);
+    color: var(--primary);
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.leaderboard-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Individual result item */
+.result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid transparent;
+    border-radius: var(--r-md);
+    background: var(--bg-surface);
+    transition: var(--t-base);
+}
+
+.result-item.winner-item {
+    border-color: rgba(245,166,35,0.3);
+    background: rgba(245,166,35,0.06);
+}
+
+.result-rank {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--text-2);
+}
+
+.result-item.winner-item .result-rank {
+    background: var(--gold-dim);
+    border-color: rgba(245,166,35,0.4);
+    color: var(--gold);
+}
+
+.result-info { flex: 1 1 0; min-width: 0; }
+.result-info strong { display: block; font-size: .95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.result-info small { color: var(--text-2); font-size: .78rem; }
+
+.result-right { text-align: right; flex-shrink: 0; }
+.result-right strong { display: block; font-size: 1rem; font-weight: 700; }
+.result-right small { color: var(--text-muted); font-size: .75rem; }
+.result-right .winner-pct { color: var(--gold); font-weight: 700; }
+
+/* Progress bar */
+.result-bar-container {
+    padding: 0 16px 12px;
+    margin-top: -4px;
+}
+
+.result-bar-track {
+    height: 5px;
+    border-radius: var(--r-full);
+    background: var(--bg-surface-2);
+    overflow: hidden;
+}
+
+.result-bar-fill {
+    height: 100%;
+    border-radius: var(--r-full);
+    background: var(--primary);
+    transition: width 1s ease-out;
+}
+
+.result-item.winner-item + .result-bar-container .result-bar-fill {
+    background: var(--gold);
+}
+
+/* Empty state */
+.results-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: .9rem;
+}
+
+
+/* ==========================================
+   PARTICIPATION STATS
+========================================== */
+
+.participation-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+}
+
+.participation-stat {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-card);
+}
+
+.participation-stat .stat-value {
+    display: block;
+    font-size: 1.9rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    margin-bottom: 4px;
+}
+
+.participation-stat .stat-label {
+    display: block;
+    font-size: .76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--text-2);
+}
+
+
+/* ==========================================
+   RESULTS FOOTER
+========================================== */
+
+.results-footer {
+    text-align: center;
+    padding-top: 32px;
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: .82rem;
+    line-height: 1.6;
+}
+
+
+/* ==========================================
+   NOT PUBLISHED STATE
+========================================== */
+
+.results-not-published {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.results-not-published .state-card {
+    margin: 0;
+}
+
+
+/* ==========================================
+   CSS CONFETTI (winner celebration)
+========================================== */
+
+.confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confetti-fall 3s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes confetti-fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+    .results-shell { padding: 24px 14px 60px; }
+    .results-hero { padding: 36px 16px 28px; }
+    .results-hero h1 { font-size: 1.6rem; }
+    .results-hero .logout-btn-float { position: static; margin-bottom: 12px; display: block; width: fit-content; margin-left: auto; }
+    .winners-section { grid-template-columns: 1fr; }
+    .winner-card { padding: 24px 18px; }
+    .winner-name { font-size: 1.35rem; }
+    .winner-stats { gap: 10px; }
+    .winner-stat { padding: 8px 12px; }
+    .leaderboard-section { grid-template-columns: 1fr; }
+    .participation-section { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 420px) {
+    .participation-section { grid-template-columns: 1fr; }
+    .winner-stats { flex-direction: column; gap: 8px; }
+}

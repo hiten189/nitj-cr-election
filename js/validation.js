@@ -108,3 +108,15 @@ function validateSettings(settings) {
     return true;
 
 }
+
+function isValidWriteInRoll(roll, requiredDigits) {
+
+    const value = String(roll || "").trim();
+    const digits = Number(requiredDigits);
+
+    return Number.isInteger(digits) &&
+           digits > 0 &&
+           value.length === digits &&
+           Array.from(value).every((character) => character >= "0" && character <= "9");
+
+}

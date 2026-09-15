@@ -1,180 +1,823 @@
+/* ==========================================================
+   IPE VOTING SYSTEM
+   student.css — Student Portal & Login
+   Premium university dark theme
+========================================================== */
+
 /* ==========================================
    LOGIN PAGE
 ========================================== */
 
 .login-page {
-
-    min-height: 100vh;
-
+    min-height: 100dvh;
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     padding: 24px;
-
+    background: var(--bg-base);
+    background-image:
+        radial-gradient(ellipse 60% 50% at 50% -10%, rgba(59,126,248,0.18) 0%, transparent 70%);
 }
-
-/* ==========================================
-   LOGIN CARD
-========================================== */
 
 .login-card {
-
     width: 100%;
-
     max-width: 440px;
-
-    background: var(--surface);
-
-    border-radius: var(--radius);
-
-    box-shadow: var(--shadow);
-
-    padding: 42px;
-
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow-lg);
+    padding: 44px 40px;
+    animation: fadeUp 0.45s ease both;
 }
 
-/* ==========================================
-   HEADING
-========================================== */
+.login-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.login-logo-mark {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-sm);
+    background: var(--primary);
+    color: white;
+    font-size: .75rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+
+.login-logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.login-logo-text strong {
+    font-size: .94rem;
+    font-weight: 700;
+}
+
+.login-logo-text small {
+    font-size: .72rem;
+    color: var(--text-2);
+}
 
 .login-title {
-
-    font-size: 2rem;
-
-    font-weight: 700;
-
+    font-size: 1.7rem;
+    font-weight: 800;
     text-align: center;
-
-    margin-bottom: 10px;
-
+    margin-bottom: 8px;
+    font-family: var(--font-display);
 }
 
 .login-subtitle {
-
     text-align: center;
-
-    color: var(--text-secondary);
-
+    color: var(--text-2);
+    font-size: .9rem;
     line-height: 1.6;
-
-    margin-bottom: 36px;
-
+    margin-bottom: 32px;
 }
 
-/* ==========================================
-   FORM
-========================================== */
-
 .form-group {
-
     display: flex;
-
     flex-direction: column;
-
-    gap: 10px;
-
-    margin-bottom: 24px;
-
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
-
-    font-weight: 500;
-
+    font-size: .84rem;
+    font-weight: 600;
+    color: var(--text-2);
 }
 
 .form-group input {
-
     width: 100%;
-
-    padding: 15px 16px;
-
-    border-radius: 10px;
-
+    padding: 13px 15px;
+    border-radius: var(--r-sm);
     border: 1px solid var(--border);
-
-    background: var(--surface-light);
-
+    background: var(--bg-surface);
     color: var(--text);
-
     font-size: .95rem;
-
+    transition: border-color var(--t-base);
 }
 
-.form-group input::placeholder {
-
-    color: var(--text-secondary);
-
-}
-
-.form-group input:focus {
-
-    border-color: var(--primary);
-
-}
-
-/* ==========================================
-   BUTTON
-========================================== */
+.form-group input::placeholder { color: var(--text-muted); }
+.form-group input:focus { border-color: var(--primary); }
 
 #continue-btn {
-
     width: 100%;
-
-    padding: 15px;
-
-    border-radius: 10px;
-
+    padding: 14px;
+    border-radius: var(--r-sm);
     background: var(--primary);
-
     color: white;
-
-    font-size: 1rem;
-
-    font-weight: 600;
-
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: var(--t-base);
 }
 
-#continue-btn:hover {
-
-    background: var(--primary-hover);
-
-}
-
-/* ==========================================
-   MOBILE
-========================================== */
-
-@media (max-width: 480px) {
-
-    .login-card {
-
-        padding: 28px 22px;
-
-    }
-
-    .login-title {
-
-        font-size: 1.7rem;
-
-    }
-
-}
-/* ==========================================
-   ERROR MESSAGE
-========================================== */
+#continue-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+#continue-btn:active { transform: translateY(0); }
+#continue-btn:disabled { opacity: .65; cursor: wait; transform: none; }
 
 .error-message {
-
-    min-height: 20px;
-
-    margin-top: 6px;
-
+    min-height: 18px;
+    margin-top: 4px;
     color: var(--danger);
+    font-size: .82rem;
+}
 
+/* Shared submit button override on login card */
+.login-card form button { width: 100%; }
+
+.dashboard-note {
+    text-align: center;
+    color: var(--text-2);
+    font-size: .88rem;
+    line-height: 1.6;
+    margin-bottom: 26px;
+}
+
+@media (max-width: 480px) {
+    .login-card { padding: 32px 22px; }
+    .login-title { font-size: 1.45rem; }
+}
+
+
+/* ==========================================
+   ELECTION VOTING SHELL
+========================================== */
+
+.election-shell {
+    width: min(1100px, 100%);
+    min-height: 100dvh;
+    margin: 0 auto;
+    padding: 36px 24px 72px;
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.election-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 36px;
+    flex-wrap: nowrap;
+}
+
+.election-header-text {
+    flex: 1 1 0;
+    min-width: 0; /* critical — prevents flex child from overflowing */
+}
+
+.eyebrow {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: var(--primary-dim);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--r-full);
+}
+
+.election-header h1 {
+    margin-top: 10px;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 800;
+    font-family: var(--font-display);
+    line-height: 1.15;
+}
+
+/* --- Voter identity badge --- */
+.voter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 5px 12px 5px 5px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-full);
+    background: var(--bg-surface);
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.voter-avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: .7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.voter-email {
+    font-size: .83rem;
+    color: var(--text-2);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+}
+
+/* Logout button */
+.logout-button {
+    flex: 0 0 auto;
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text-2);
+    font-size: .84rem;
+    font-weight: 500;
+    white-space: nowrap;
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.logout-button:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+    background: var(--bg-surface);
+}
+
+
+/* ==========================================
+   VOTE FORM
+========================================== */
+
+.vote-form {
+    display: grid;
+    gap: 20px;
+}
+
+.rank-instruction {
+    padding: 14px 18px;
+    border-radius: var(--r-sm);
+    background: var(--primary-dim);
+    border: 1px solid rgba(59,126,248,0.2);
+    font-size: .9rem;
+    color: var(--text-2);
+}
+
+.rank-instruction strong { color: var(--text); }
+
+/* ==========================================
+   VOTE SECTION CARD
+========================================== */
+
+.vote-section {
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    transition: border-color var(--t-base);
+}
+
+.vote-section:focus-within {
+    border-color: var(--border-strong);
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.section-num {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary-dim);
+    color: var(--primary);
+    font-size: .75rem;
+    font-weight: 800;
+    border: 1px solid rgba(59,126,248,0.25);
+}
+
+/* legacy class support */
+.section-heading > span:not(.section-num) {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--primary-dim);
+    color: var(--primary);
+    font-size: .75rem;
+    font-weight: 800;
+}
+
+.section-heading h2 { font-size: 1.15rem; font-weight: 700; }
+.section-heading p { margin-top: 2px; color: var(--text-2); font-size: .85rem; }
+
+/* ==========================================
+   CANDIDATE GRID & CARDS
+========================================== */
+
+.candidate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.candidate-card {
+    position: relative;
+    display: flex;
+    min-height: 88px;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-surface);
+    cursor: pointer;
+    transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast), box-shadow var(--t-base);
+}
+
+.candidate-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-sm);
+}
+
+.candidate-card:has(input:checked) {
+    border-color: var(--primary);
+    background: var(--primary-dim);
+    box-shadow: 0 0 0 1px var(--primary-glow);
+}
+
+.candidate-card input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.candidate-radio {
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+    border: 2px solid var(--border-strong);
+    border-radius: 50%;
+    transition: border-color var(--t-base);
+}
+
+.candidate-card:has(input:checked) .candidate-radio {
+    border: 6px solid var(--primary);
+}
+
+/* Candidate avatar initials */
+.candidate-avatar {
+    display: flex;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+}
+
+.candidate-card:has(input:checked) .candidate-avatar {
+    background: var(--primary-dim);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.candidate-details {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+
+.candidate-details strong {
+    font-size: .92rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.candidate-details small {
+    color: var(--text-2);
+    font-size: .78rem;
+}
+
+.empty-candidates {
+    color: var(--text-muted);
+    font-size: .88rem;
+    padding: 8px 0;
+}
+
+/* ==========================================
+   WRITE-IN
+========================================== */
+
+.write-in {
+    display: grid;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.write-in label {
+    font-size: .88rem;
+    font-weight: 600;
+    color: var(--text-2);
+}
+
+.write-in label span { color: var(--text-muted); font-weight: 400; }
+
+.write-in-input {
+    width: min(360px, 100%);
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg-surface);
+    color: var(--text);
+    font-size: .92rem;
+    transition: border-color var(--t-base);
+}
+
+.write-in-input:focus { border-color: var(--primary); }
+
+/* ==========================================
+   VOTE ERROR & SUBMIT
+========================================== */
+
+.vote-error {
+    min-height: 22px;
+    color: #fca5a5;
+    font-size: .88rem;
+    font-weight: 500;
+}
+
+.submit-vote {
+    justify-self: end;
+    min-width: 220px;
+    padding: 14px 24px;
+    border-radius: var(--r-sm);
+    background: var(--primary);
+    color: white;
+    font-size: .95rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    transition: var(--t-base);
+}
+
+.submit-vote:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--primary-glow);
+}
+
+.submit-vote:active { transform: translateY(0); }
+.submit-vote:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+
+/* ==========================================
+   CONFIRMATION MODAL
+========================================== */
+
+.modal {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.modal[hidden] { display: none; }
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 10, 22, 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.modal-card {
+    position: relative;
+    z-index: 1;
+    width: min(440px, 100%);
+    padding: 32px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--r-xl);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    animation: scaleIn 0.25s ease both;
+}
+
+.modal-icon {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    margin: 0 auto 16px;
+    border-radius: var(--r-md);
+    background: var(--primary-dim);
+    font-size: 1.5rem;
+}
+
+.modal-card h2 { font-size: 1.3rem; font-weight: 700; }
+.modal-card .modal-intro { margin: 8px 0 20px; color: var(--text-2); font-size: .9rem; }
+
+.vote-review {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.review-selection {
+    display: grid;
+    gap: 3px;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg-surface);
+}
+
+.review-category {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 2px;
+}
+
+.review-selection strong { font-size: .98rem; }
+.review-selection span { color: var(--text-2); font-size: .85rem; }
+
+.modal-card .vote-warning {
+    margin: 0 0 20px;
+    color: var(--warning);
     font-size: .85rem;
+    line-height: 1.5;
+}
 
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.secondary-button {
+    padding: 13px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: transparent;
+    color: var(--text);
+    font-weight: 600;
+    font-size: .88rem;
+}
+
+.secondary-button:hover { border-color: var(--border-strong); background: var(--bg-surface); }
+.modal-actions .submit-vote { min-width: 0; }
+
+
+/* ==========================================
+   STATE CARDS (Not started / Ended)
+========================================== */
+
+.state-card,
+.success-card {
+    width: min(520px, 100%);
+    margin: 10vh auto 0;
+    padding: 48px 36px;
+    text-align: center;
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-surface) 100%);
+    box-shadow: var(--shadow-lg);
+    animation: fadeUp 0.45s ease both;
+}
+
+.state-icon {
+    display: grid;
+    width: 64px;
+    height: 64px;
+    place-items: center;
+    margin: 0 auto 20px;
+    border-radius: var(--r-lg);
+    background: var(--primary-dim);
+    border: 1px solid rgba(59,126,248,0.2);
+    font-size: 2rem;
+}
+
+.state-card h2,
+.success-card h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    margin-bottom: 10px;
+}
+
+.state-card p,
+.success-card p {
+    margin: 0 auto 20px;
+    color: var(--text-2);
+    line-height: 1.7;
+    max-width: 340px;
+}
+
+.state-card small,
+.success-card small {
+    display: block;
+    color: var(--text-muted);
+    font-size: .82rem;
+    margin-bottom: 22px;
+    word-break: break-all;
+}
+
+/* Countdown timer */
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 56px;
+    padding: 12px 8px;
+    border-radius: var(--r-md);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+}
+
+.countdown-unit strong {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.countdown-unit span {
+    font-size: .65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+
+/* ==========================================
+   SUCCESS / ALREADY VOTED PAGE
+========================================== */
+
+.success-page {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.success-card { margin: 0; }
+
+.success-tick {
+    display: grid;
+    width: 80px;
+    height: 80px;
+    place-items: center;
+    margin: 0 auto 24px;
+    border: 3px solid var(--success);
+    border-radius: 50%;
+    color: var(--success);
+    font-size: 2.4rem;
+    font-weight: 700;
+    animation: tick-in .55s cubic-bezier(.2, .9, .3, 1) both;
+    background: var(--success-dim);
+}
+
+.vote-timestamp {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: var(--r-full);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: .82rem;
+    margin-bottom: 24px;
+}
+
+
+/* ==========================================
+   DRAG AND DROP RANKING
+========================================== */
+
+.drag-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.drag-card {
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+}
+
+.drag-card:active { cursor: grabbing; }
+
+.drag-card.is-dragging {
+    opacity: 0.88;
+    box-shadow: var(--shadow-md);
+    background: var(--primary-dim);
+    border-color: var(--primary);
+    transform: scale(1.02);
+    z-index: 50;
+}
+
+.drag-placeholder {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--r-md);
+    background: rgba(59,126,248,0.05);
+}
+
+.drag-handle {
+    display: grid;
+    place-items: center;
+    color: var(--text-muted);
+    font-size: 1.3rem;
+    cursor: grab;
+    padding: 0 4px;
+}
+
+.drag-card:active .drag-handle { cursor: grabbing; }
+
+.rank-badge {
+    margin-left: auto;
+    font-size: .82rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-dim);
+    padding: 3px 10px;
+    border-radius: var(--r-full);
+    white-space: nowrap;
+}
+
+.rank-label { color: var(--primary); font-weight: 600; }
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 600px) {
+    .election-shell { padding: 20px 14px 48px; }
+    .election-header { margin-bottom: 22px; flex-wrap: wrap; }
+    .election-header-text { min-width: 0; }
+    .voter-email { max-width: 200px; }
+    .election-header h1 { font-size: 1.45rem; }
+    .vote-section { padding: 18px 14px; }
+    .candidate-grid { grid-template-columns: 1fr; }
+    .submit-vote { width: 100%; justify-self: stretch; }
+    .modal-card { padding: 24px 18px; }
+    .modal-actions { flex-direction: column-reverse; }
+    .modal-actions button { width: 100%; }
+    .state-card, .success-card { padding: 32px 20px; }
+    .countdown-timer { gap: 8px; }
+    .countdown-unit { min-width: 48px; }
+    .countdown-unit strong { font-size: 1.4rem; }
 }

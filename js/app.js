@@ -1,19 +1,15 @@
-document.addEventListener("DOMContentLoaded", initializeApplication);
-
-async function initializeApplication() {
-
-    const { data, error } = await supabaseClient.auth.getSession();
-
-    if (error || !data.session) {
-
-        renderLoginScreen();
-
-        attachLoginEvents();
-
-        return;
-
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        await routeAuthenticatedUser();
+    } catch (error) {
+        console.error("Application startup error:", error);
+        renderError("Unable to load", error.message || MESSAGE.UNKNOWN_ERROR);
+    } finally {
+        stopLoading();
+        showApp();
     }
+});
 
-    loadStudentDashboard(data.session.user.email);
-
-}
+supabaseClient.auth.onAuthStateChange((event) => {
+    if (event === "SIGNED_IN") routeAuthenticatedUser().catch(console.error);
+});
