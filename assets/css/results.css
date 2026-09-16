@@ -18,11 +18,24 @@
 ========================================== */
 
 .results-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 32px 20px 28px;
+    padding: 28px 20px 24px;
     margin-bottom: 28px;
     border-bottom: 1px solid var(--border);
-    position: relative;
+    gap: 8px;
+}
+
+/* Flex row: badge on left, logout on right */
+.results-hero-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+    margin-bottom: 4px;
 }
 
 .results-hero-badge {
@@ -38,7 +51,6 @@
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    margin-bottom: 12px;
     animation: shimmer 2s ease infinite;
 }
 
@@ -47,7 +59,7 @@
     font-weight: 800;
     font-family: var(--font-display);
     line-height: 1.15;
-    margin-bottom: 6px;
+    margin-bottom: 2px;
 }
 
 .results-hero p {
@@ -57,9 +69,6 @@
 }
 
 .results-hero .logout-btn-float {
-    position: absolute;
-    top: 16px;
-    right: 16px;
     padding: 6px 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
@@ -69,6 +78,9 @@
     font-weight: 500;
     cursor: pointer;
     transition: var(--t-base);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 32px;
 }
 
 .results-hero .logout-btn-float:hover {
@@ -172,20 +184,7 @@
     margin-bottom: 14px;
 }
 
-.winner-avatar {
-    display: grid;
-    width: 60px;
-    height: 60px;
-    place-items: center;
-    margin: 0 auto 12px;
-    border-radius: 50%;
-    background: var(--gold-dim);
-    border: 2px solid rgba(255, 214, 10, 0.4);
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--gold);
-    font-family: var(--font-display);
-}
+/* .winner-avatar removed — no initial letter circle */
 
 .winner-name {
     font-size: 1.4rem;
@@ -193,6 +192,7 @@
     font-family: var(--font-display);
     margin-bottom: 4px;
     line-height: 1.2;
+    animation: winner-name-glow 3s ease-in-out infinite;
 }
 
 .winner-announcement {
@@ -201,6 +201,8 @@
     font-size: .82rem;
     font-weight: 700;
     line-height: 1.4;
+    text-wrap: balance;
+    max-width: 280px;
 }
 
 .winner-roll {

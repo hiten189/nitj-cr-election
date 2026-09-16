@@ -297,13 +297,13 @@ body:has(.results-shell) {
     line-height: 1.2;
 }
 
-/* --- Voter identity badge --- */
+/* --- Voter identity badge — email only, no avatar circle --- */
 .voter-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     margin-top: 8px;
-    padding: 4px 10px 4px 4px;
+    padding: 4px 12px 4px 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-full);
     background: var(--bg-surface);
@@ -311,20 +311,7 @@ body:has(.results-shell) {
     overflow: hidden;
 }
 
-.voter-avatar {
-    display: inline-flex;
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    font-size: .65rem;
-    font-weight: 800;
-    text-transform: uppercase;
-}
+/* .voter-avatar removed — no initial circles */
 
 .voter-email {
     font-size: .8rem;
@@ -393,12 +380,28 @@ body:has(.results-shell) {
     box-shadow: var(--shadow-glass);
     padding: 20px;
     margin-bottom: 16px;
-    transition: border-color var(--t-base);
+    transition: border-color var(--t-base), box-shadow var(--t-base);
 }
 
 .vote-section:focus-within {
     border-color: rgba(255, 255, 255, 0.15);
     border-left-color: var(--gold);
+}
+
+/* Inline validation state */
+.vote-section.is-invalid {
+    border-left-color: var(--danger);
+    box-shadow: var(--shadow-glass), inset 0 0 0 0 transparent, 0 0 0 1px rgba(255, 69, 58, 0.25);
+    animation: fadeUp 0.2s ease;
+}
+
+.invalid-message {
+    margin-top: 8px;
+    font-size: .8rem;
+    color: var(--danger);
+    font-weight: 600;
+    min-height: 16px;
+    display: block;
 }
 
 .section-heading {
@@ -449,32 +452,17 @@ body:has(.results-shell) {
 
 /* ==========================================
    CANDIDATE GRID & CARDS
-   Strategy: 2 columns on mobile (names readable),
-   scale up on larger screens. Cards use clamp()
-   for heights so they auto-adapt to viewport.
+   Strategy: full-width vertical list (Google Forms style)
 ========================================== */
 
 .candidate-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(6px, 1.5vw, 12px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vw, 12px);
 }
 
-.candidate-mark {
-    display: grid;
-    place-items: center;
-    width: clamp(26px, 6vw, 34px);
-    height: clamp(26px, 6vw, 34px);
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: linear-gradient(160deg, rgba(96,165,250,0.45), rgba(37,99,235,0.18));
-    border: 1px solid rgba(255,255,255,0.22);
-    color: #e8f1ff;
-    font-size: clamp(0.62rem, 1.6vw, 0.8rem);
-    font-weight: 800;
-    letter-spacing: 0;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.28);
-}
+/* .candidate-mark removed — no initial avatar circles on candidate cards */
+
 
 .candidate-card {
     position: relative;
@@ -539,9 +527,34 @@ body:has(.results-shell) {
     height: 0;
 }
 
-.candidate-radio {
-    display: none;
+/* Radio indicator ring — replaces the old initial-circle avatar */
+.candidate-radio-indicator {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid var(--border-strong);
+    background: transparent;
+    transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+    position: relative;
 }
+
+.candidate-card:has(input:checked) .candidate-radio-indicator {
+    border-color: var(--gold);
+    background: var(--gold);
+    box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.2);
+}
+
+.candidate-card:has(input:checked) .candidate-radio-indicator::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: #0d1b2e;
+}
+
+.candidate-radio { display: none; }
+
 
 
 .candidate-details {
@@ -727,14 +740,15 @@ body:has(.results-shell) {
     font-size: .95rem;
     font-weight: 800;
     letter-spacing: 0.03em;
-    transition: var(--t-base);
+    transition: var(--t-bounce);
     box-shadow: 0 4px 16px rgba(255, 214, 10, 0.3);
     border: 1px solid rgba(255, 214, 10, 0.4);
+    animation: glow-pulse 3s infinite;
 }
 
 .submit-vote:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(255, 214, 10, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(255, 214, 10, 0.5);
 }
 
 .submit-vote:active {

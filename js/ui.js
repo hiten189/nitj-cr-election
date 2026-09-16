@@ -203,40 +203,12 @@ const UI = {
     },
 
     // -------------------------
-    // Layout Interactions
+    // Layout Interactions (legacy stub — nav is always visible, no hide-on-scroll)
     // -------------------------
     setupDynamicBottomNav(navSelector = ".admin-sidebar") {
-        const nav = document.querySelector(navSelector);
-        if (!nav) return;
-
-        let lastScrollY = window.scrollY;
-        
-        // Hide on scroll down, show on scroll up (Safari style) - MOBILE ONLY
-        window.addEventListener("scroll", () => {
-            if (window.innerWidth > 768) {
-                nav.classList.remove("nav-hidden");
-                return;
-            }
-            if (window.scrollY > lastScrollY && window.scrollY > 50) {
-                nav.classList.add("nav-hidden");
-            } else {
-                nav.classList.remove("nav-hidden");
-            }
-            lastScrollY = window.scrollY;
-        }, { passive: true });
-
-        // iOS Keyboard Handling: hide nav when any input/textarea is focused - MOBILE ONLY
-        document.body.addEventListener("focusin", (e) => {
-            if (window.innerWidth > 768) return;
-            if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") {
-                nav.classList.add("nav-hidden");
-            }
-        });
-
-        document.body.addEventListener("focusout", (e) => {
-            if (window.innerWidth > 768) return;
-            nav.classList.remove("nav-hidden");
-        });
+        // Intentionally empty: the nav bar is always visible.
+        // Hide-on-scroll was removed as it degraded UX on mobile
+        // (nav appeared to disappear randomly during voting/admin tasks).
     }
 };
 

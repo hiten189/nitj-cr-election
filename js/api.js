@@ -29,6 +29,22 @@ const PublicElectionAPI = {
             authorizationConfigured: data?.authorization_configured === true,
             studentLoginsOpen: data?.student_logins_open === true
         };
+    },
+
+    /** Fetches just the election name for the public login page.
+     *  Returns null silently if the settings table isn't publicly readable. */
+    async getElectionName() {
+        try {
+            const { data, error } = await supabaseClient
+                .from("settings")
+                .select("election_name")
+                .limit(1)
+                .maybeSingle();
+            if (error || !data) return null;
+            return data.election_name || null;
+        } catch (_) {
+            return null;
+        }
     }
 };
 

@@ -44,22 +44,23 @@ const AdminCandidates = {
         const state = window.ElectionState;
         const isLive = state.settings?.election_status !== ELECTION_STATUS.DRAFT;
         const candidates = state.candidates;
-        const totalCandidatesCount = candidates.length;
+        const positions = state.settings?.election_positions || "male_female";
 
-        const summaryHTML = `
-            <div class="candidate-summary-bar" style="margin-bottom: 20px; padding: 16px; background: var(--bg-surface-2); border-radius: 12px; border: 1px solid var(--border); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
-                <div style="display:flex; gap:24px; align-items:center;">
-                    <div>
-                        <span style="font-size:0.8rem; color:var(--text-2); display:block;">Total Candidates</span>
-                        <strong style="font-size:1.1rem; color:var(--text);">${totalCandidatesCount} added</strong>
-                    </div>
-                </div>
+        // Determine which positions are configured
+        const allowMale   = positions !== "female_only";
+        const allowFemale = positions !== "male_only";
 
-            </div>
-        `;
+        const configuredPositions = [];
+        if (allowMale)   configuredPositions.push({ key: "male",   label: "Male CR",   position: POSITION.MALE });
+        if (allowFemale) configuredPositions.push({ key: "female", label: "Female CR", position: POSITION.FEMALE });
+
+        // Build position dropdown options (filtered to configured positions only)
+        const positionOptions = configuredPositions
+            .map(p => `<option value="${p.position}">${escapeHTML(p.label)}</option>`)
+            .join("");
 
         const formHTML = !isLive ? `
-            <form id="candidate-form" class="ui-card" style="display: grid; grid-template-columns: 1.2fr 1fr 150px auto auto; gap: 14px; align-items: end; margin-bottom: 18px; padding: 16px;">
+            <form id="candidate-form" class="admin-form" style="display: grid; grid-template-columns: 1.2fr 1fr 150px auto auto; gap: 14px; align-items: end; margin-bottom: 18px; padding: 16px;">
                 <input id="candidate-id" type="hidden">
                 <label style="display:grid; gap:6px; font-size:0.85rem; font-weight:600; color:var(--text-2);">Name
                     <input id="candidate-name" required style="padding:8px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
@@ -69,8 +70,7 @@ const AdminCandidates = {
                 </label>
                 <label style="display:grid; gap:6px; font-size:0.85rem; font-weight:600; color:var(--text-2);">Position
                     <select id="candidate-position" style="padding:8px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
-                        <option value="${POSITION.MALE}">Male CR</option>
-                        <option value="${POSITION.FEMALE}">Female CR</option>
+                        ${positionOptions}
                     </select>
                 </label>
                 <button class="btn btn-primary" id="candidate-submit" type="submit">Save</button>
@@ -78,15 +78,50 @@ const AdminCandidates = {
             </form>
         ` : '';
 
-        const renderRow = (c) => `
-            <td><strong>${escapeHTML(c.name)}</strong></td>
-            <td>${escapeHTML(c.roll_number)}</td>
-            <td>${escapeHTML(c.position)}</td>
-            ${!isLive ? `<td style="text-align:right;">
-                <button class="btn btn-ghost" type="button" data-edit-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">✏ Edit</button>
-                <button class="btn btn-danger" type="button" data-delete-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">🗑 Delete</button>
-            </td>` : ''}
-        `;
+        // Build per-position grouped sections
+        const groupedHTML = configuredPositions.map(({ key, label, position }) => {
+            const positionCandidates = candidates.filter(c => c.position === position);
+            const count = positionCandidates.length;
+            const bannerClass = count > 0 ? "ok" : "warn";
+            const bannerText  = count > 0
+                ? `✓ ${count} candidate${count !== 1 ? 's' : ''}`
+                : "⚠ No candidates added";
+
+            // Responsive layout: wide screens use table, narrow/mobile use cards
+            const tableHTML = `
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            ${!isLive ? '<th></th>' : ''}
+                        </tr></thead>
+                        <tbody>
+                            ${positionCandidates.length
+                                ? positionCandidates.map(c => `
+                                    <tr>
+                                        <td><strong>${escapeHTML(c.name)}</strong></td>
+                                        <td>${escapeHTML(c.roll_number || '—')}</td>
+                                        ${!isLive ? `<td style="text-align:right;">
+                                            <button class="btn btn-ghost" type="button" data-edit-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">✏ Edit</button>
+                                            <button class="btn btn-danger" type="button" data-delete-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">🗑 Delete</button>
+                                        </td>` : ''}
+                                    </tr>`).join('')
+                                : `<tr><td colspan="${isLive ? 2 : 3}" style="text-align:center; color:var(--text-muted); padding:20px;">No candidates for this position.</td></tr>`
+                            }
+                        </tbody>
+                    </table>
+                </div>`;
+
+            return `
+                <div class="position-group" data-position="${key}">
+                    <div class="position-group-header">
+                        <span class="position-group-title">${escapeHTML(label)}</span>
+                        <span class="position-status-banner ${bannerClass}">${bannerText}</span>
+                    </div>
+                    ${tableHTML}
+                </div>`;
+        }).join('');
 
         container.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:22px;">
@@ -95,11 +130,11 @@ const AdminCandidates = {
                     <p style="color:var(--text-2); font-size:0.87rem; margin-top:4px;">${isLive ? "Election is live. Candidates are locked." : "Add, update, or remove candidates."}</p>
                 </div>
             </div>
-            ${summaryHTML}
             ${formHTML}
-            ${UI.Table(isLive ? ["Name", "Roll number", "Position"] : ["Name", "Roll number", "Position", ""], candidates, renderRow)}
+            ${groupedHTML}
         `;
     },
+
 
     async refresh() {
         logDebug("AdminCandidates refresh");

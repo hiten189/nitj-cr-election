@@ -24,11 +24,8 @@ const corsHeaders = {
 };
 
 // ============================================================
-//  EMAIL SHELL (Matching Website Aesthetic)
+//  EMAIL SHELL
 // ============================================================
-const FONT_BODY = `-apple-system, BlinkMacSystemFont, "SF Pro Text", "Plus Jakarta Sans", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif`;
-const FONT_DISPLAY = `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif`;
-
 function emailShell(bodyRows: string): string {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -36,20 +33,12 @@ function emailShell(bodyRows: string): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="dark">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-  body { margin:0; padding:0; width:100%; -webkit-text-size-adjust:100%; background-color:#02050c; color:#f4f7ff; font-family:${FONT_BODY}; font-size:15px; }
-  .email-wrapper { background-color:#02050c; background-image: radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 40%); }
-  .glass-card { background-color:#0a1222; border:1px solid rgba(255,255,255,0.08); border-radius:20px; overflow:hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.42); }
-  h1 { font-family:${FONT_DISPLAY}; font-weight:800; letter-spacing:-0.02em; color:#ffffff; }
-  .text-muted { color:#7d90ad; }
-  .text-secondary { color:#c5d4ee; }
-</style>
 </head>
-<body>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrapper">
-  <tr><td align="center" style="padding:40px 16px;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:540px;" class="glass-card">
+<body style="margin:0;padding:0;background:#05080f;width:100%;-webkit-text-size-adjust:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#05080f;">
+  <tr><td align="center" style="padding:24px 16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="max-width:600px;background:#081221;border-radius:20px;overflow:hidden;border:1px solid #1c2b42;">
       ${bodyRows}
     </table>
   </td></tr>
@@ -61,27 +50,26 @@ function emailShell(bodyRows: string): string {
 function emailBtn(href: string, label: string, bg: string, color: string): string {
     return `
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr><td align="center" style="padding:16px 24px 0;">
+  <tr><td align="center" style="padding:8px 24px 0;">
     <a href="${href}"
        style="display:block;width:100%;box-sizing:border-box;background:${bg};color:${color};
-              text-decoration:none;padding:16px 20px;font-weight:700;border-radius:14px;
+              text-decoration:none;padding:17px 20px;font-weight:800;border-radius:14px;
               font-size:16px;letter-spacing:0.2px;text-align:center;
-              font-family:${FONT_BODY};box-shadow: 0 8px 24px rgba(59, 130, 246, 0.28);
-              border:1px solid rgba(255,255,255,0.15);">${label}</a>
+              font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${label}</a>
   </td></tr>
 </table>`;
 }
 
 function pill(text: string, bg: string, color: string, border: string): string {
     return `<div style="display:inline-block;background:${bg};border:1px solid ${border};border-radius:999px;
-                        padding:6px 14px;font-size:11px;font-weight:800;color:${color};letter-spacing:1px;
-                        font-family:${FONT_BODY};">${text}</div>`;
+                        padding:5px 14px;font-size:11px;font-weight:800;color:${color};letter-spacing:1.3px;
+                        font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${text}</div>`;
 }
 
 function emailFooter(note = "NITJ Election System &middot; Secure &amp; anonymous voting"): string {
     return `
-<tr><td style="padding:24px;text-align:center;border-top:1px solid rgba(255,255,255,0.05);background-color:rgba(12,20,40,0.3);">
-  <p style="margin:0;font-size:13px;color:#7d90ad;font-family:${FONT_BODY};">${note}</p>
+<tr><td style="padding:18px 24px;text-align:center;border-top:1px solid #1c2b42;background:#040c1a;">
+  <p style="margin:0;font-size:12px;color:#3d5070;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${note}</p>
 </td></tr>`;
 }
 
@@ -92,9 +80,7 @@ async function buildEmail(
     notifType: string,
     magicLink: string,
     recipientEmail: string
-): Promise<{ subject: string; html: string; plainText: string } | null> {
-
-    if (notifType === "VOTING_STARTED") {
+): Promise<{ subject: string; html: string; plainText: string }    if (notifType === "VOTING_STARTED") {
         const { data: candidates } = await supabase
             .from("candidates").select("name,position,roll_number").eq("active", true);
 
@@ -104,18 +90,18 @@ async function buildEmail(
         const renderGroup = (cands: any[], title: string, color: string, bgRow: string) => {
             if (cands.length === 0) return '';
             return `
-<tr><td style="padding:16px 16px 8px;font-size:11px;font-weight:800;color:${color};letter-spacing:1px;font-family:${FONT_BODY};">${title.toUpperCase()}</td></tr>
+<tr><td style="padding:12px 14px 4px;font-size:10px;font-weight:800;color:${color};letter-spacing:1px;border-bottom:1px solid #1c2b42;">${title.toUpperCase()}</td></tr>
 ${cands.map(c => {
+    const init = (c.name || "?").charAt(0).toUpperCase();
     return `
 <tr>
-  <td style="padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.04);background-color:${bgRow};">
+  <td style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,0.05);background:${bgRow};">
     <table cellpadding="0" cellspacing="0" border="0" width="100%" style="table-layout:fixed;"><tr>
-      <td style="width:24px;vertical-align:middle;">
-        <div style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.16);"></div>
-      </td>
-      <td style="padding-left:12px;font-family:${FONT_BODY};">
-        <div style="font-weight:700;color:#f4f7ff;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
-        <div style="font-size:13px;color:#7d90ad;margin-top:2px;">Roll ${c.roll_number || "n/a"}</div>
+      <td style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.1);
+                 color:#fff;font-weight:800;font-size:12px;text-align:center;vertical-align:middle;">${init}</td>
+      <td style="padding-left:10px;">
+        <div style="font-weight:700;color:#e8f0ff;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
+        <div style="font-size:11px;color:#5e7799;margin-top:1px;">Roll ${c.roll_number || "n/a"}</div>
       </td>
     </tr></table>
   </td>
@@ -123,30 +109,30 @@ ${cands.map(c => {
 }).join("")}`;
         };
 
-        const maleRows = renderGroup(maleCR, "Male CR", "#3b82f6", "transparent");
-        const femaleRows = renderGroup(femaleCR, "Female CR", "#6366f1", "transparent");
+        const maleRows = renderGroup(maleCR, "Male CR", "#3b7ef8", "rgba(59,126,248,0.04)");
+        const femaleRows = renderGroup(femaleCR, "Female CR", "#a855f7", "rgba(168,85,247,0.04)");
 
         const subject = "NITJ CR Election is LIVE";
         const html = emailShell(`
 <tr>
-  <td style="padding:40px 24px 16px;text-align:center;background-color:rgba(12,20,40,0.55);">
-    <h1 style="margin:0;font-size:28px;">Voting is Live</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">The election portal is now open. Tap below to securely cast your ballot.</p>
+  <td style="padding:36px 24px 28px;text-align:center;background:linear-gradient(180deg,#0d1b33 0%,#081221 100%);border-bottom:1px solid #1c2b42;">
+    <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Voting is Live</h1>
+    <p style="margin:10px 0 0;font-size:15px;color:#9fb3d1;line-height:1.5;">One tap to cast your ballot.</p>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 20px;">
+  <td style="padding:20px 16px 8px;">
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-           style="background-color:rgba(16,26,48,0.4);border:1px solid rgba(255,255,255,0.06);border-radius:16px;overflow:hidden;">
+           style="background:#111f36;border:1px solid #1c2b42;border-radius:14px;overflow:hidden;">
       ${maleRows}${femaleRows}
-      ${(!maleRows && !femaleRows) ? `<tr><td style="padding:16px;color:#7d90ad;font-size:14px;font-family:${FONT_BODY};">No candidates listed yet.</td></tr>` : ''}
+      ${(!maleRows && !femaleRows) ? `<tr><td style="padding:12px 14px;color:#5e7799;font-size:13px;">No candidates listed yet.</td></tr>` : ''}
     </table>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 24px 32px;">
-    ${emailBtn(magicLink, "Cast Vote &rarr;", "linear-gradient(135deg, #3b82f6, #6366f1)", "#ffffff")}
-    <p style="text-align:center;margin:16px 0 0;font-size:13px;color:#7d90ad;font-family:${FONT_BODY};">Magic link authentication &middot; No password needed</p>
+  <td style="padding:20px 16px 28px;">
+    ${emailBtn(magicLink, "Vote Now &rarr;", "#3b7ef8", "#ffffff")}
+    <p style="text-align:center;margin:12px 0 0;font-size:12px;color:#5e7799;">Secure link &middot; No password required</p>
   </td>
 </tr>
 ${emailFooter()}`);
@@ -157,17 +143,15 @@ ${emailFooter()}`);
         const subject = "NITJ CR Election Results";
         const html = emailShell(`
 <tr>
-  <td style="padding:48px 24px 32px;text-align:center;background-color:rgba(255,214,10,0.03);border-top: 4px solid #ffd60a;">
-    <div style="font-size:56px;line-height:1;margin-bottom:16px;">🏆</div>
-    <h1 style="margin:0;font-size:30px;color:#ffd60a;">Winners Declared</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">The election has concluded and official results have been published.</p>
+  <td style="padding:40px 24px 28px;text-align:center;background:linear-gradient(180deg,#1a180e,#081221);border-top: 4px solid #d4af37; border-left: 4px solid #d4af37; border-right: 4px solid #d4af37; border-radius: 20px 20px 0 0;">
+    <div style="font-size:48px;line-height:1;margin-bottom:12px;">🏆</div>
+    <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Winners Declared</h1>
+    <p style="margin:10px 0 0;font-size:15px;color:#9fb3d1;line-height:1.5;">Official election results are now available.</p>
   </td>
 </tr>
-<tr>
-  <td style="padding:16px 24px 40px;background-color:rgba(255,214,10,0.03);">
-    ${emailBtn(magicLink, "View Results &rarr;", "linear-gradient(135deg, #ffd60a, #d4af37)", "#0a1222")}
-  </td>
-</tr>
+<tr><td style="padding:16px 16px 32px; border-bottom: 4px solid #d4af37; border-left: 4px solid #d4af37; border-right: 4px solid #d4af37; border-radius: 0 0 20px 20px;">
+  ${emailBtn(magicLink, "View Results &rarr;", "#ffd60a", "#0a1424")}
+</td></tr>
 ${emailFooter()}`);
         return { subject, html, plainText: `${subject}\n\nResults: ${magicLink}\n\nNITJ Election System` };
     }
@@ -176,14 +160,14 @@ ${emailFooter()}`);
         const subject = "Reminder: Cast Your Vote";
         const html = emailShell(`
 <tr>
-  <td style="padding:48px 24px 32px;text-align:center;background-color:rgba(255,159,10,0.03);border-top: 4px solid #ff9f0a;">
-    <h1 style="margin:0;font-size:28px;">Don't forget to vote</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">The voting window is still open, but you haven't cast your ballot yet.</p>
+  <td style="padding:36px 24px 28px;text-align:center;background:linear-gradient(180deg,#1f150d,#081221);border-bottom:1px solid #332010;">
+    <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Don't forget to vote</h1>
+    <p style="margin:10px 0 0;font-size:15px;color:#9fb3d1;line-height:1.5;">Your ballot is waiting.</p>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 24px 40px;background-color:rgba(255,159,10,0.03);">
-    ${emailBtn(magicLink, "Cast My Vote &rarr;", "linear-gradient(135deg, #ff9f0a, #e68a00)", "#0a1222")}
+  <td style="padding:20px 16px 28px;">
+    ${emailBtn(magicLink, "Cast My Vote &rarr;", "#ff9f0a", "#0a1424")}
   </td>
 </tr>
 ${emailFooter()}`);
@@ -194,14 +178,14 @@ ${emailFooter()}`);
         const subject = "Admin Alert: 100% Turnout";
         const html = emailShell(`
 <tr>
-  <td style="padding:48px 24px 32px;text-align:center;background-color:rgba(50,215,75,0.03);border-top: 4px solid #32d74b;">
-    <h1 style="margin:0;font-size:28px;">100% Turnout Reached</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">Every single student on the eligible voters list has submitted their ballot.</p>
+  <td style="padding:40px 24px 28px;text-align:center;background:#111f36;border-bottom:1px solid #1c2b42;">
+    <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;">100% Turnout Reached</h1>
+    <p style="margin:10px 0 0;font-size:15px;color:#9fb3d1;line-height:1.5;">All students have voted.</p>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 24px 40px;background-color:rgba(50,215,75,0.03);">
-    ${emailBtn(magicLink, "Open Admin Portal &rarr;", "linear-gradient(135deg, #3b82f6, #6366f1)", "#ffffff")}
+  <td style="padding:24px 16px 32px;">
+    ${emailBtn(magicLink, "Open Admin Portal &rarr;", "#3b7ef8", "#ffffff")}
   </td>
 </tr>
 ${emailFooter("Administrator Alert")}`);
@@ -212,14 +196,14 @@ ${emailFooter("Administrator Alert")}`);
         const subject = "Urgent: Voting is closing soon";
         const html = emailShell(`
 <tr>
-  <td style="padding:48px 24px 32px;text-align:center;background-color:rgba(255,69,58,0.03);border-top: 4px solid #ff453a;">
-    <h1 style="margin:0;font-size:28px;">Voting Closes Soon</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">You must cast your vote immediately. The election is about to conclude.</p>
+  <td style="padding:36px 24px 28px;text-align:center;background:linear-gradient(180deg,#1f0f13,#081221);border-bottom:1px solid #331a20;">
+    <h1 style="margin:0;font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;">Voting Closes Soon</h1>
+    <p style="margin:10px 0 0;font-size:15px;color:#9fb3d1;line-height:1.5;">Cast your vote immediately.</p>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 24px 40px;background-color:rgba(255,69,58,0.03);">
-    ${emailBtn(magicLink, "Vote Immediately &rarr;", "linear-gradient(135deg, #ff453a, #d92d24)", "#ffffff")}
+  <td style="padding:24px 16px 32px;">
+    ${emailBtn(magicLink, "Vote Immediately &rarr;", "#ff453a", "#ffffff")}
   </td>
 </tr>
 ${emailFooter()}`);
@@ -234,18 +218,19 @@ ${emailFooter()}`);
         const subject = `Admin Alert: ${count} pending voters`;
         const html = emailShell(`
 <tr>
-  <td style="padding:48px 24px 20px;text-align:center;background-color:rgba(12,20,40,0.55);">
-    <h1 style="margin:0;font-size:28px;">Pending Voters</h1>
-    <p style="margin:12px 0 0;font-size:16px;color:#c5d4ee;line-height:1.5;font-family:${FONT_BODY};">${count} student(s) have not voted yet.</p>
+  <td style="padding:32px 24px 20px;text-align:center;background:#111f36;border-bottom:1px solid #1c2b42;">
+    <h1 style="margin:0;font-size:22px;font-weight:800;color:#fff;">Pending Voters</h1>
+    <p style="margin:8px 0 0;font-size:14px;color:#9fb3d1;">${count} student(s) have not voted.</p>
   </td>
 </tr>
 <tr>
-  <td style="padding:16px 24px 40px;background-color:rgba(12,20,40,0.55);">
-    ${emailBtn(magicLink, "View Details in Portal &rarr;", "linear-gradient(135deg, #3b82f6, #6366f1)", "#ffffff")}
+  <td style="padding:16px;">
+    ${emailBtn(magicLink, "View Details in Portal &rarr;", "#3b7ef8", "#ffffff")}
   </td>
 </tr>
 ${emailFooter("Administrator Report")}`);
         return { subject, html, plainText: `${subject}\n\nAdmin Portal: ${magicLink}` };
+    }ion System` };
     }
 
     return null;

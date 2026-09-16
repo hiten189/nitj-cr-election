@@ -41,7 +41,9 @@
     transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease;
 }
 
+/* nav-hidden class is no longer applied — nav bar is always visible */
 .admin-sidebar.nav-hidden {
+    /* intentionally not hidden — kept for compatibility */
     transform: translate(-50%, -140%);
     opacity: 0;
     pointer-events: none;
@@ -440,15 +442,113 @@
     white-space: nowrap;
     border: 1px solid rgba(150,194,255,.3);
     box-shadow: 0 4px 12px rgba(59, 126, 248, 0.3);
-    transition: transform var(--t-fast), box-shadow var(--t-fast);
+    transition: transform var(--t-bounce), box-shadow var(--t-fast);
 }
 
-.primary-button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(59, 126, 248, 0.4); }
-.danger-button { background: linear-gradient(135deg, #e11d48, #be123c); border-color: rgba(251,113,133,.3); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); }
-.danger-button:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(225, 29, 72, 0.4); }
-.primary-button:disabled,
-.danger-button:disabled { cursor: not-allowed; opacity: .45; }
+.primary-button {
+    animation: glow-pulse 3s infinite;
+}
 
+.primary-button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 20px rgba(59, 126, 248, 0.5); }
+.danger-button { background: linear-gradient(135deg, #e11d48, #be123c); border-color: rgba(251,113,133,.3); box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); }
+.danger-button:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 20px rgba(225, 29, 72, 0.5); }
+.primary-button:disabled,
+.danger-button:disabled { cursor: not-allowed; opacity: .45; animation: none; transform: none; box-shadow: none; }
+
+
+/* ==========================================
+   CANDIDATES — POSITION GROUPS & STATUS
+========================================== */
+
+.position-group {
+    margin-bottom: 28px;
+}
+
+.position-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.position-group-title {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.position-status-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--r-full);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    white-space: nowrap;
+}
+
+.position-status-banner.ok {
+    background: var(--success-dim);
+    border: 1px solid rgba(50, 215, 75, 0.25);
+    color: #86efac;
+}
+
+.position-status-banner.warn {
+    background: var(--warning-dim);
+    border: 1px solid rgba(255, 159, 10, 0.25);
+    color: #fcd34d;
+}
+
+/* Mobile candidate cards (replaces table rows on narrow viewports) */
+.candidate-card-mobile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    background: var(--bg-surface);
+    margin-bottom: 8px;
+    transition: var(--t-fast);
+}
+
+.candidate-card-mobile:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+    background: var(--bg-surface-2);
+}
+
+.candidate-card-mobile-info {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.candidate-card-mobile-info strong {
+    display: block;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.candidate-card-mobile-info small {
+    display: block;
+    font-size: .74rem;
+    color: var(--text-2);
+    margin-top: 2px;
+}
+
+.candidate-card-mobile-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
 
 /* ==========================================
    TABLE
@@ -1420,11 +1520,7 @@ tr:hover td { background: rgba(59, 126, 248, 0.08); }
         box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45);
     }
 
-    .admin-sidebar.nav-hidden {
-        transform: translateY(110%);
-        opacity: 0;
-        pointer-events: none;
-    }
+    /* nav-hidden is not applied on mobile either — always visible */
 
     .admin-content-wrapper {
         padding-top: 6px;
@@ -1513,10 +1609,57 @@ tr:hover td { background: rgba(59, 126, 248, 0.08); }
 }
 
 @media (min-width: 901px) {
+    .admin-sidebar {
+        /* Desktop: Left Sidebar */
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 200px;
+        height: 100vh;
+        height: 100dvh;
+        transform: none;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(10, 18, 36, 0.95);
+        align-items: flex-start;
+        padding-top: 32px;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    }
     .admin-sidebar.nav-hidden {
-        transform: translateX(-50%);
+        /* Always visible on desktop */
         opacity: 1;
         pointer-events: auto;
+        transform: none;
+    }
+    
+    .nav-glass-track {
+        flex-direction: column;
+        border-radius: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        gap: 8px;
+        padding: 0 12px;
+    }
+    
+    .nav-item {
+        justify-content: flex-start;
+        padding: 12px 16px;
+        border-radius: var(--r-md);
+        font-size: 0.85rem;
+    }
+    
+    .nav-liquid-pill {
+        display: none; /* Hide pill in vertical mode for simplicity, use active class background */
+    }
+
+    .nav-item.active {
+        background: linear-gradient(90deg, var(--primary-dim), rgba(59, 130, 246, 0.05));
+        border-left: 3px solid var(--primary);
+    }
+
+    .admin-content-wrapper {
+        padding-left: 200px;
     }
 }
 

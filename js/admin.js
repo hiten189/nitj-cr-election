@@ -191,14 +191,26 @@ function openModal(type) {
         const methodValid = Boolean(state.settings?.voting_method);
         const posSettingValid = Boolean(state.settings?.election_positions);
         
-        const isValid = nameValid && activeCands.length > 0 && methodValid && posSettingValid;
+        // Per-position go-live validation
+        const positions = state.settings?.election_positions || "male_female";
+        const allowMale = positions !== "female_only";
+        const allowFemale = positions !== "male_only";
+        
+        const hasMale = activeCands.some(c => c.position === "Male CR");
+        const hasFemale = activeCands.some(c => c.position === "Female CR");
+        
+        const maleValid = allowMale ? hasMale : true;
+        const femaleValid = allowFemale ? hasFemale : true;
+        const candidatesValid = maleValid && femaleValid;
+
+        const isValid = nameValid && candidatesValid && methodValid && posSettingValid;
 
         if (!isValid) {
             UI.showModal("Cannot Launch Election", `
                 <p>Please complete all required setup items before launching.</p>
                 <div style="margin-top:10px;">
                     <p><span>${nameValid ? '✅' : '❌'}</span> <strong>Election Name:</strong> ${nameValid ? 'OK' : 'Missing'}</p>
-                    <p><span>${activeCands.length > 0 ? '✅' : '❌'}</span> <strong>Active Candidates:</strong> ${activeCands.length > 0 ? 'OK' : 'None'}</p>
+                    <p><span>${candidatesValid ? '✅' : '❌'}</span> <strong>Candidates:</strong> ${allowMale ? (hasMale ? 'Male ✅ ' : 'Male ❌ ') : ''}${allowFemale ? (hasFemale ? 'Female ✅ ' : 'Female ❌ ') : ''}</p>
                     <p><span>${methodValid ? '✅' : '❌'}</span> <strong>Voting Method:</strong> ${methodValid ? 'OK' : 'Missing'}</p>
                 </div>
             `);

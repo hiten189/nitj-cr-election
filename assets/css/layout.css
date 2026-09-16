@@ -118,7 +118,23 @@
   animation: fadeUp .5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 .auth-header { text-align: center; }
-.auth-brand { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 22px; color: #d8e5ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.auth-brand { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 10px; color: #d8e5ff; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+/* Election name shown below the brand, set by admin in Setup */
+.auth-election-name {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text-2);
+    letter-spacing: -0.02em;
+    margin: 0 auto 16px;
+    max-width: 320px;
+    line-height: 1.35;
+    background: linear-gradient(135deg, rgba(59, 126, 248, 0.12), rgba(99, 102, 241, 0.08));
+    border: 1px solid rgba(92, 151, 255, 0.2);
+    border-radius: var(--r-sm);
+    padding: 6px 14px;
+    display: inline-block;
+    text-align: center;
+}
 /* Replaced the blue icon box with a clean pill wordmark */
 .auth-mark-pill {
     display: inline-flex;

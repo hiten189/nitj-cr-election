@@ -9,12 +9,10 @@ function isFemaleCandidate(candidate) {
 }
 
 function candidateCard(candidate, category, type = "radio", totalCandidates = 1) {
-    const initial = escapeHTML((candidate.name || "?").charAt(0).toUpperCase());
     if (type === "drag") {
         return `
             <div class="candidate-card drag-card haptic-press" draggable="true" data-id="${candidate.id}">
                 <div class="drag-handle" aria-hidden="true" title="Drag to reorder">⣿</div>
-                <span class="candidate-mark" aria-hidden="true">${initial}</span>
                 <span class="candidate-details">
                     <strong>${escapeHTML(candidate.name)}</strong>
                     ${candidate.roll_number ? `<small>Roll No. ${escapeHTML(candidate.roll_number)}</small>` : ''}
@@ -29,8 +27,7 @@ function candidateCard(candidate, category, type = "radio", totalCandidates = 1)
     return `
         <label class="candidate-card haptic-press" for="${category}-${candidate.id}">
             <input id="${category}-${candidate.id}" type="radio" name="${category}_candidate" value="${candidate.id}">
-            <span class="candidate-radio" aria-hidden="true"></span>
-            <span class="candidate-mark" aria-hidden="true">${initial}</span>
+            <span class="candidate-radio-indicator" aria-hidden="true"></span>
             <span class="candidate-details">
                 <strong>${escapeHTML(candidate.name)}</strong>
                 ${candidate.roll_number ? `<small>Roll No. ${escapeHTML(candidate.roll_number)}</small>` : ''}
@@ -144,7 +141,6 @@ function renderVotingDashboard(email, settings, candidates) {
                     <span class="eyebrow">${isFinalRound ? '&#9876; FINAL ROUND' : '&#11044; LIVE ELECTION'}</span>
                     <h1>${escapeHTML(settings.election_name || "NITJ CR Election")}</h1>
                     <div class="voter-badge">
-                        <span class="voter-avatar">${emailInitial}</span>
                         <span class="voter-email">${emailDisplay}</span>
                     </div>
                 </div>
@@ -157,7 +153,7 @@ function renderVotingDashboard(email, settings, candidates) {
                 </div>` : ''}
                 
                 ${showMale ? `
-                <section class="vote-section">
+                <section class="vote-section" id="vote-section-male" data-section="male">
                     <div class="section-heading">
                         <div><h2>Male CR</h2><p>${isRanked ? "Rank by preference" : "Tap to choose"}</p></div>
                     </div>
@@ -165,10 +161,11 @@ function renderVotingDashboard(email, settings, candidates) {
                         ${maleCandidates.map((c) => candidateCard(c, "male", isRanked ? "drag" : "radio", maleCandidates.length)).join("")}
                     </div>
                     ${writeInEnabled && !isRanked ? writeInField("male", writeInDigits) : ""}
+                    <p class="invalid-message" id="invalid-male" role="alert" aria-live="polite"></p>
                 </section>` : ''}
 
                 ${showFemale ? `
-                <section class="vote-section">
+                <section class="vote-section" id="vote-section-female" data-section="female">
                     <div class="section-heading">
                         <div><h2>Female CR</h2><p>${isRanked ? "Rank by preference" : "Tap to choose"}</p></div>
                     </div>
@@ -176,26 +173,14 @@ function renderVotingDashboard(email, settings, candidates) {
                         ${femaleCandidates.map((c) => candidateCard(c, "female", isRanked ? "drag" : "radio", femaleCandidates.length)).join("")}
                     </div>
                     ${writeInEnabled && !isRanked ? writeInField("female", writeInDigits) : ""}
+                    <p class="invalid-message" id="invalid-female" role="alert" aria-live="polite"></p>
                 </section>` : ''}
 
                 <p id="vote-error" class="vote-error" role="alert" aria-live="polite"></p>
                 <button id="review-vote" class="submit-vote haptic-press" type="submit">Cast Your Vote &rarr;</button>
             </form>
-        </main>
-        <div id="confirmation-modal" class="modal" hidden aria-hidden="true">
-            <div class="modal-backdrop"></div>
-            <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
-                <div class="modal-icon" aria-hidden="true">&#10003;</div>
-                <h2 id="confirmation-title">Confirm Your Vote</h2>
-                <p class="modal-intro">Review your choices before confirming.</p>
-                <div id="vote-review" class="vote-review"></div>
-                <p class="vote-warning">This cannot be changed after you confirm.</p>
-                <div class="modal-actions">
-                    <button id="cancel-vote" class="secondary-button haptic-press" type="button">Go Back</button>
-                    <button id="confirm-vote" class="submit-vote haptic-press" type="button">Confirm &amp; Submit</button>
-                </div>
-            </section>
-        </div>`);
+        </main>`);
+
 
     document.getElementById("logout-btn").addEventListener("click", logout);
 
@@ -220,15 +205,54 @@ function renderVotingDashboard(email, settings, candidates) {
 
     document.getElementById("vote-form").addEventListener("submit", (event) => {
         event.preventDefault();
+
+        // Double-submit guard
+        const form = event.target;
+        if (form.dataset.submitting) return;
+
         const vote = getVoteFromForm(email, writeInEnabled, writeInDigits, settings, isRanked);
         // Override election_positions based on what sections are ACTUALLY visible
-        // so validation never requires a section that wasn't shown
         if (!showMale) vote.election_positions = "female_only";
         if (!showFemale) vote.election_positions = "male_only";
-        const error = validateStudentVote(vote, writeInEnabled, writeInDigits, isRanked);
-        if (error) return showVoteError(error);
+
+        // Inline section validation
+        let firstInvalidSection = null;
+        const clearSectionError = (section) => {
+            section.classList.remove("is-invalid");
+            const msg = section.querySelector(".invalid-message");
+            if (msg) msg.textContent = "";
+        };
+        const setSectionError = (sectionId, message) => {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            section.classList.add("is-invalid");
+            const msg = section.querySelector(".invalid-message");
+            if (msg) msg.textContent = message;
+            if (!firstInvalidSection) firstInvalidSection = section;
+        };
+
+        // Clear previous errors
+        ["vote-section-male", "vote-section-female"].forEach(id => {
+            const s = document.getElementById(id);
+            if (s) clearSectionError(s);
+        });
         showVoteError("");
-        openConfirmation(vote, candidates, isRanked);
+
+        // Validate per-section
+        const error = validateStudentVote(vote, writeInEnabled, writeInDigits, isRanked);
+        if (error) {
+            if (error.toLowerCase().includes("male")) setSectionError("vote-section-male", error);
+            else if (error.toLowerCase().includes("female")) setSectionError("vote-section-female", error);
+            else showVoteError(error);
+
+            if (firstInvalidSection) {
+                firstInvalidSection.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            return;
+        }
+
+        // Valid — submit directly (no confirmation modal)
+        submitStudentVote(vote);
     });
 }
 
@@ -492,8 +516,13 @@ function openConfirmation(vote, candidates, isRanked) {
 }
 
 async function submitStudentVote(vote) {
-    const button = document.getElementById("confirm-vote");
-    setButtonLoading(button, true);
+    const button = document.getElementById("review-vote");
+    const form = document.getElementById("vote-form");
+
+    // Double-submit guard
+    if (form) form.dataset.submitting = "1";
+    if (button) { button.disabled = true; setButtonLoading(button, true); }
+
     try {
         const { writeInDigits, student_email, ...voteToSave } = vote;
 
@@ -501,7 +530,6 @@ async function submitStudentVote(vote) {
         const { error } = await supabaseClient.rpc("submit_vote", { vote_payload: voteToSave });
         if (error) {
             if (error.message.includes("ALREADY_VOTED")) {
-                document.getElementById("confirmation-modal").hidden = true;
                 renderAlreadyVoted();
                 return;
             }
@@ -512,9 +540,9 @@ async function submitStudentVote(vote) {
     } catch (error) {
         console.error("Vote submission error:", error);
         showVoteError("An unexpected error occurred while securely recording your vote. Please try again or contact administration.");
-        document.getElementById("confirmation-modal").hidden = true;
-    } finally {
-        setButtonLoading(button, false);
+        // Re-enable on error so user can retry
+        if (form) delete form.dataset.submitting;
+        if (button) { button.disabled = false; setButtonLoading(button, false); }
     }
 }
 

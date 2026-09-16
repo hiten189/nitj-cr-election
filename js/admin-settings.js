@@ -101,6 +101,9 @@ const AdminSettings = {
                                     <option value="${ELECTION_POSITIONS.MALE_ONLY}" ${settings.election_positions === ELECTION_POSITIONS.MALE_ONLY ? "selected" : ""}>Male Only</option>
                                     <option value="${ELECTION_POSITIONS.FEMALE_ONLY}" ${settings.election_positions === ELECTION_POSITIONS.FEMALE_ONLY ? "selected" : ""}>Female Only</option>
                                 </select>
+                                <span style="font-size:0.75rem; color:var(--text-muted); margin-top:-4px;">
+                                    ${window.ElectionState.candidates ? `Current: ${window.ElectionState.candidates.filter(c => c.position === "Male CR").length} Male CR, ${window.ElectionState.candidates.filter(c => c.position === "Female CR").length} Female CR` : ''}
+                                </span>
                             </label>
                         </div>
                     </div>

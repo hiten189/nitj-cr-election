@@ -49,6 +49,11 @@ async function loadAndRenderResults(containerId = "app") {
                 if (!resRes.error && resRes.data) {
                     container.innerHTML = renderResultsFromRPCData(settings, candidates, resRes.data || [], writeRes.data || [], Number(countRes.data) || 0);
                     triggerConfetti();
+                    // Count-up animation on all stat numbers
+                    container.querySelectorAll('.stat-value').forEach(el => {
+                        const val = parseInt(el.textContent, 10);
+                        if (!isNaN(val) && val > 0) countUp(el, val);
+                    });
                     const logoutBtn = document.getElementById("logout-btn");
                     if (logoutBtn) logoutBtn.addEventListener("click", logout);
                     return;
@@ -60,6 +65,11 @@ async function loadAndRenderResults(containerId = "app") {
 
         container.innerHTML = renderResultsHTML(settings, candidates, voteList);
         triggerConfetti();
+        // Count-up animation on all stat numbers
+        container.querySelectorAll('.stat-value').forEach(el => {
+            const val = parseInt(el.textContent, 10);
+            if (!isNaN(val) && val > 0) countUp(el, val);
+        });
 
         const logoutBtn = document.getElementById("logout-btn");
         if (logoutBtn) logoutBtn.addEventListener("click", logout);
@@ -171,7 +181,6 @@ function renderWinnerCard(positionLabel, data, isOfficialWinner = false) {
     if (!data.results.length || data.totalVotes === 0) return '';
     const winner = data.results[0];
     const pct    = data.totalVotes > 0 ? ((winner.count / data.totalVotes) * 100).toFixed(1) : "0.0";
-    const initial = (winner.name || '?').charAt(0).toUpperCase();
     const unit    = data.isRanked ? 'pts' : 'votes';
     const labelTitle = isOfficialWinner ? `Official Winner — ${positionLabel}` : `${positionLabel} Winner`;
 
@@ -179,9 +188,8 @@ function renderWinnerCard(positionLabel, data, isOfficialWinner = false) {
         <article class="winner-card">
             <span class="winner-trophy">🏆</span>
             <span class="winner-position-label">${escapeHTML(labelTitle)}</span>
-            <div class="winner-avatar">${initial}</div>
             <h2 class="winner-name">${escapeHTML(winner.name)}</h2>
-            <p class="winner-announcement">Congratulations to <strong>${escapeHTML(winner.name)}</strong> for winning <strong>${escapeHTML(positionLabel)}</strong>.</p>
+            <p class="winner-announcement">${escapeHTML(winner.name)} wins <strong>${escapeHTML(positionLabel)}</strong>.</p>
             <p class="winner-roll">Roll No. ${escapeHTML(winner.roll_number || '—')}</p>
             <div class="winner-stats">
                 <div class="winner-stat">
@@ -280,10 +288,12 @@ function renderResultsHTML(settings, candidates, votes) {
 
             <!-- HERO -->
             <header class="results-hero">
-                <button id="logout-btn" class="logout-btn-float" type="button">Log out</button>
-                <div class="results-hero-badge">✓ Official Winner &amp; Election Results</div>
+                <div class="results-hero-top-row">
+                    <div class="results-hero-badge">✓ Official Winner &amp; Election Results</div>
+                    <button id="logout-btn" class="logout-btn-float" type="button">Log out</button>
+                </div>
                 <h1>${escapeHTML(settings.election_name || "Class Representative Election")}</h1>
-                <p>Results declared on ${electionDate} &nbsp;·&nbsp; Verified by NITJ Election System</p>
+                <p>Results declared on ${electionDate} &nbsp;&middot;&nbsp; Verified by NITJ Election System</p>
             </header>
 
             ${hasFinalVsRound ? `
@@ -376,10 +386,12 @@ function renderResultsFromRPCData(settings, candidates, rpcResults, writeInResul
         <main class="results-shell">
 
             <header class="results-hero">
-                <button id="logout-btn" class="logout-btn-float" type="button">Log out</button>
-                <div class="results-hero-badge">✓ Official Election Results</div>
+                <div class="results-hero-top-row">
+                    <div class="results-hero-badge">✓ Official Election Results</div>
+                    <button id="logout-btn" class="logout-btn-float" type="button">Log out</button>
+                </div>
                 <h1>${escapeHTML(settings.election_name || "Class Representative Election")}</h1>
-                <p>Results declared on ${electionDate} &nbsp;·&nbsp; Verified by NITJ Election System</p>
+                <p>Results declared on ${electionDate} &nbsp;&middot;&nbsp; Verified by NITJ Election System</p>
             </header>
 
             <div class="winners-section">
@@ -415,6 +427,19 @@ function renderResultsFromRPCData(settings, candidates, rpcResults, writeInResul
 /* ==========================================
    CSS CONFETTI EFFECT
 ========================================== */
+
+/* Count-up number animation */
+function countUp(el, target, duration = 1200) {
+    if (!el || isNaN(target) || target === 0) return;
+    const start = performance.now();
+    const easeOut = t => 1 - Math.pow(1 - t, 3);
+    requestAnimationFrame(function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        el.textContent = Math.round(easeOut(progress) * target);
+        if (progress < 1) requestAnimationFrame(step);
+    });
+}
 
 function triggerConfetti() {
     if (typeof confetti !== "undefined") {
