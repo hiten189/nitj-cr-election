@@ -60,21 +60,23 @@ const AdminCandidates = {
             .join("");
 
         const formHTML = !isLive ? `
-            <form id="candidate-form" class="admin-form" style="display: grid; grid-template-columns: 1.2fr 1fr 150px auto auto; gap: 14px; align-items: end; margin-bottom: 18px; padding: 16px;">
+            <form id="candidate-form" class="admin-form" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; padding: 16px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--glass-bg);">
                 <input id="candidate-id" type="hidden">
                 <label style="display:grid; gap:6px; font-size:0.85rem; font-weight:600; color:var(--text-2);">Name
-                    <input id="candidate-name" required style="padding:8px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
+                    <input id="candidate-name" required placeholder="Candidate Name" style="padding:10px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
                 </label>
                 <label style="display:grid; gap:6px; font-size:0.85rem; font-weight:600; color:var(--text-2);">Roll number (Optional)
-                    <input id="candidate-roll" style="padding:8px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
+                    <input id="candidate-roll" placeholder="Roll Number" style="padding:10px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
                 </label>
                 <label style="display:grid; gap:6px; font-size:0.85rem; font-weight:600; color:var(--text-2);">Position
-                    <select id="candidate-position" style="padding:8px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
+                    <select id="candidate-position" style="padding:10px; border-radius:var(--r-sm); border:1px solid var(--border); background:var(--bg-surface); color:var(--text);">
                         ${positionOptions}
                     </select>
                 </label>
-                <button class="btn btn-primary" id="candidate-submit" type="submit">Save</button>
-                <button class="btn btn-ghost" id="candidate-cancel" type="button" style="display:none;">Cancel</button>
+                <div style="display: flex; gap: 10px; margin-top: 4px;">
+                    <button class="primary-button" id="candidate-submit" type="submit" style="flex: 1;">Confirm</button>
+                    <button class="btn btn-ghost" id="candidate-cancel" type="button" style="display:none; flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: var(--r-md);">Cancel</button>
+                </div>
             </form>
         ` : '';
 
@@ -87,30 +89,25 @@ const AdminCandidates = {
                 ? `✓ ${count} candidate${count !== 1 ? 's' : ''}`
                 : "⚠ No candidates added";
 
-            // Responsive layout: wide screens use table, narrow/mobile use cards
+            // Responsive layout: use cards for all screens (small boxes, mobile friendly)
             const tableHTML = `
-                <div class="table-wrap">
-                    <table>
-                        <thead><tr>
-                            <th>Name</th>
-                            <th>Roll Number</th>
-                            ${!isLive ? '<th></th>' : ''}
-                        </tr></thead>
-                        <tbody>
-                            ${positionCandidates.length
-                                ? positionCandidates.map(c => `
-                                    <tr>
-                                        <td><strong>${escapeHTML(c.name)}</strong></td>
-                                        <td>${escapeHTML(c.roll_number || '—')}</td>
-                                        ${!isLive ? `<td style="text-align:right;">
-                                            <button class="btn btn-ghost" type="button" data-edit-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">✏ Edit</button>
-                                            <button class="btn btn-danger" type="button" data-delete-candidate="${c.id}" style="padding:4px 8px; font-size:0.75rem;">🗑 Delete</button>
-                                        </td>` : ''}
-                                    </tr>`).join('')
-                                : `<tr><td colspan="${isLive ? 2 : 3}" style="text-align:center; color:var(--text-muted); padding:20px;">No candidates for this position.</td></tr>`
-                            }
-                        </tbody>
-                    </table>
+                <div class="candidates-list" style="display: flex; flex-direction: column; gap: 8px;">
+                    ${positionCandidates.length
+                        ? positionCandidates.map(c => `
+                            <div class="candidate-card-mobile">
+                                <div class="candidate-card-mobile-info">
+                                    <strong>${escapeHTML(c.name)}</strong>
+                                    ${c.roll_number ? `<small>Roll No. ${escapeHTML(c.roll_number)}</small>` : '<small>—</small>'}
+                                </div>
+                                ${!isLive ? `
+                                <div class="candidate-card-mobile-actions">
+                                    <button class="btn btn-ghost" type="button" data-edit-candidate="${c.id}" style="padding:6px 10px; font-size:0.8rem; border-radius:var(--r-sm); border:1px solid var(--border);">✏ Edit</button>
+                                    <button class="btn btn-danger" type="button" data-delete-candidate="${c.id}" style="padding:6px 10px; font-size:0.8rem; border-radius:var(--r-sm);">🗑 Remove</button>
+                                </div>` : ''}
+                            </div>
+                        `).join('')
+                        : `<div style="text-align:center; color:var(--text-muted); padding:20px; border: 1px dashed var(--border); border-radius: var(--r-md);">No candidates for this position.</div>`
+                    }
                 </div>`;
 
             return `
